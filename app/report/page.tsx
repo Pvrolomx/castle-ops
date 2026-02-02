@@ -1,23 +1,27 @@
 'use client'
 export const dynamic = 'force-dynamic'
-import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { OWNERS, RENTAL_PROPERTIES, ALL_PROPERTIES, CATEGORIES, URGENCY } from '@/lib/config'
+import { OWNERS, RENTAL_PROPERTIES, CATEGORIES, URGENCY } from '@/lib/config'
 import { t, Lang } from '@/lib/i18n'
 import { ArrowLeft, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
 
 function ReportForm() {
   const searchParams = useSearchParams()
-  const router = useRouter()
   const [lang, setLang] = useState<Lang>((searchParams.get('lang') as Lang) || 'es')
   const [step, setStep] = useState(1)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
   const [reporterType, setReporterType] = useState<'renter' | 'owner' | ''>('')
-  const [selectedOwner, setSelectedOwner] = useState('')
+  
+  // Owner code flow
+  const [ownerCode, setOwnerCode] = useState('')
+  const [ownerError, setOwnerError] = useState(false)
+  const [matchedOwner, setMatchedOwner] = useState<typeof OWNERS[0] | null>(null)
+  
   const [selectedProperty, setSelectedProperty] = useState('')
   const [form, setForm] = useState({
     category: 'plomeria',
@@ -28,7 +32,25 @@ function ReportForm() {
     reporter_email: ''
   })
 
-  const ownerProperties = OWNERS.find(o => o.name === selectedOwner)?.properties || []
+  function validateOwnerCode() {
+    const owner = OWNERS.find(o => o.code === ownerCode)
+    if (owner) {
+      setMatchedOwner(owner)
+      setOwnerError(false)
+      if (owner.properties.length === 1) {
+        setSelectedProperty(owner.properties[0])
+      }
+    } else {
+      setOwnerError(true)
+      setMatchedOwner(null)
+    }
+  }
+
+  function proceedFromOwner() {
+    if (matchedOwner && selectedProperty) {
+      setStep(3)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -37,8 +59,8 @@ function ReportForm() {
     const { error } = await supabase.from('incidents').insert([{
       property_name: selectedProperty,
       reporter_type: reporterType === 'renter' ? 'huesped' : 'propietario',
-      reporter_name: reporterType === 'owner' ? selectedOwner : form.reporter_name,
-      reporter_contact: form.reporter_contact || form.reporter_email,
+      reporter_name: reporterType === 'owner' ? matchedOwner?.name : form.reporter_name,
+      reporter_contact: reporterType === 'owner' ? (matchedOwner?.name || '') : (form.reporter_contact || form.reporter_email),
       category: form.category,
       description: form.description,
       urgency: form.urgency
@@ -64,7 +86,7 @@ function ReportForm() {
         <p className="text-gray-500 text-lg">{t.reportSentMsg[lang]}</p>
         <div className="flex gap-4 mt-4">
           <Link href={`/?lang=${lang}`} className="btn-primary">{t.back[lang]}</Link>
-          <button onClick={() => { setSubmitted(false); setStep(1); setReporterType(''); setSelectedOwner(''); setSelectedProperty('') }} 
+          <button onClick={() => { setSubmitted(false); setStep(1); setReporterType(''); setMatchedOwner(null); setOwnerCode(''); setSelectedProperty('') }} 
             className="btn-secondary">{t.newReport[lang]}</button>
         </div>
       </div>
@@ -73,7 +95,6 @@ function ReportForm() {
 
   return (
     <div className="max-w-lg mx-auto">
-      {/* Lang Toggle */}
       <div className="fixed top-4 right-4 z-50">
         <button onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
           className="bg-white shadow-md rounded-full px-4 py-2 text-sm font-medium hover:shadow-lg transition-shadow">
@@ -104,70 +125,104 @@ function ReportForm() {
         </div>
       )}
 
-      {/* Step 2: Select property */}
-      {step === 2 && (
+      {/* Step 2: Property selection */}
+      {step === 2 && reporterType === 'owner' && (
         <div className="card space-y-6">
           <h1 className="text-2xl font-semibold text-castle-dark text-center">
-            {reporterType === 'owner' ? t.selectOwner[lang] : t.selectProperty[lang]}
+            {lang === 'es' ? 'Ingresa tu código' : 'Enter your code'}
           </h1>
+          <p className="text-gray-500 text-center text-sm">
+            {lang === 'es' ? 'Código de 4 dígitos asignado por Castle Solutions' : '4-digit code assigned by Castle Solutions'}
+          </p>
 
-          {reporterType === 'owner' ? (
-            <>
-              <select className="w-full border-2 rounded-xl px-4 py-3 text-lg"
-                value={selectedOwner} onChange={e => { setSelectedOwner(e.target.value); setSelectedProperty('') }}>
-                <option value="">{t.selectOwner[lang]}...</option>
-                {OWNERS.map(o => <option key={o.name} value={o.name}>{o.name}</option>)}
-              </select>
-              {selectedOwner && ownerProperties.length === 1 && (
-                <div className="bg-gray-50 rounded-xl p-4">
-                  <p className="text-sm text-gray-500">{t.property[lang]}:</p>
-                  <p className="font-semibold text-lg">{ownerProperties[0]}</p>
+          <div className="flex justify-center">
+            <input type="text" inputMode="numeric" maxLength={4}
+              className={`border-2 rounded-xl px-6 py-4 text-center text-3xl tracking-[0.5em] w-48 ${ownerError ? 'border-red-500 shake' : matchedOwner ? 'border-green-500' : ''}`}
+              placeholder="••••"
+              value={ownerCode}
+              onChange={e => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 4)
+                setOwnerCode(val)
+                setOwnerError(false)
+                setMatchedOwner(null)
+                setSelectedProperty('')
+                if (val.length === 4) {
+                  const owner = OWNERS.find(o => o.code === val)
+                  if (owner) {
+                    setMatchedOwner(owner)
+                    if (owner.properties.length === 1) setSelectedProperty(owner.properties[0])
+                  } else {
+                    setOwnerError(true)
+                  }
+                }
+              }} />
+          </div>
+
+          {ownerError && (
+            <p className="text-red-500 text-center text-sm">
+              {lang === 'es' ? 'Código no encontrado' : 'Code not found'}
+            </p>
+          )}
+
+          {matchedOwner && (
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center space-y-3">
+              <p className="text-green-800 font-medium text-lg">
+                {lang === 'es' ? 'Bienvenido' : 'Welcome'}, {matchedOwner.name} 👋
+              </p>
+              
+              {matchedOwner.properties.length === 1 ? (
+                <div className="bg-white rounded-lg p-3">
+                  <p className="text-sm text-gray-500">{t.property[lang]}</p>
+                  <p className="font-semibold">{matchedOwner.properties[0]}</p>
                 </div>
-              )}
-              {selectedOwner && ownerProperties.length > 1 && (
+              ) : (
                 <div className="space-y-2">
-                  <p className="text-sm text-gray-500">{t.selectProperty[lang]}:</p>
-                  {ownerProperties.map(p => (
+                  <p className="text-sm text-gray-600">{t.selectProperty[lang]}:</p>
+                  {matchedOwner.properties.map(p => (
                     <button key={p} onClick={() => setSelectedProperty(p)}
-                      className={`w-full text-left p-4 rounded-xl border-2 transition-all ${selectedProperty === p ? 'border-castle-gold bg-amber-50' : 'hover:border-gray-300'}`}>
-                      {p}
+                      className={`w-full text-left p-3 rounded-lg border-2 transition-all ${selectedProperty === p ? 'border-castle-gold bg-amber-50' : 'bg-white hover:border-gray-300'}`}>
+                      🏡 {p}
                     </button>
                   ))}
                 </div>
               )}
-              {selectedOwner && (
-                <button onClick={() => {
-                  if (ownerProperties.length === 1) setSelectedProperty(ownerProperties[0])
-                  if (selectedProperty || ownerProperties.length === 1) setStep(3)
-                }}
-                  disabled={!selectedProperty && ownerProperties.length > 1}
-                  className="w-full btn-primary disabled:opacity-50">
-                  {lang === 'es' ? 'Continuar' : 'Continue'}
-                </button>
-              )}
-            </>
-          ) : (
-            <div className="space-y-2">
-              {RENTAL_PROPERTIES.map(p => (
-                <button key={p} onClick={() => { setSelectedProperty(p); setStep(3) }}
-                  className="w-full text-left p-4 rounded-xl border-2 hover:border-castle-gold hover:bg-amber-50 transition-all text-lg">
-                  🏡 {p}
-                </button>
-              ))}
+
+              <button onClick={() => setStep(3)}
+                disabled={!selectedProperty}
+                className="w-full btn-primary disabled:opacity-50 mt-2">
+                {lang === 'es' ? 'Continuar' : 'Continue'}
+              </button>
             </div>
           )}
 
-          <button onClick={() => { setStep(1); setReporterType(''); setSelectedOwner('') }}
+          <button onClick={() => { setStep(1); setReporterType(''); setOwnerCode(''); setMatchedOwner(null) }}
             className="w-full text-gray-400 hover:text-gray-600 py-2">{t.back[lang]}</button>
         </div>
       )}
 
-      {/* Step 3: Issue details + contact */}
+      {step === 2 && reporterType === 'renter' && (
+        <div className="card space-y-6">
+          <h1 className="text-2xl font-semibold text-castle-dark text-center">{t.selectProperty[lang]}</h1>
+          <div className="space-y-2">
+            {RENTAL_PROPERTIES.map(p => (
+              <button key={p} onClick={() => { setSelectedProperty(p); setStep(3) }}
+                className="w-full text-left p-4 rounded-xl border-2 hover:border-castle-gold hover:bg-amber-50 transition-all text-lg">
+                🏡 {p}
+              </button>
+            ))}
+          </div>
+          <button onClick={() => { setStep(1); setReporterType('') }}
+            className="w-full text-gray-400 hover:text-gray-600 py-2">{t.back[lang]}</button>
+        </div>
+      )}
+
+      {/* Step 3: Issue details */}
       {step === 3 && (
         <form onSubmit={handleSubmit} className="card space-y-6">
           <div className="bg-gray-50 rounded-xl p-4 text-center">
             <p className="text-sm text-gray-500">{t.property[lang]}</p>
             <p className="font-semibold text-lg">{selectedProperty}</p>
+            {matchedOwner && <p className="text-sm text-gray-400">{matchedOwner.name}</p>}
           </div>
 
           <div>
@@ -197,7 +252,6 @@ function ReportForm() {
             </div>
           </div>
 
-          {/* Contact Info - only for renters */}
           {reporterType === 'renter' && (
             <div className="border-t pt-6 space-y-4">
               <h3 className="font-semibold text-castle-dark">{t.contactInfo[lang]}</h3>
