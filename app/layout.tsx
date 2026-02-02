@@ -1,6 +1,7 @@
 import './globals.css'
 import Link from 'next/link'
-import { Home, AlertTriangle, Users, Settings } from 'lucide-react'
+import { Home, AlertTriangle, Users } from 'lucide-react'
+import Image from 'next/image'
 
 export const metadata = {
   title: 'Castle Ops - Operations Management',
@@ -13,13 +14,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+        <link rel="icon" href="/logo.png" />
       </head>
       <body className="bg-castle-sand min-h-screen">
         <nav className="bg-castle-dark text-white shadow-lg">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between h-16">
-              <Link href="/" className="flex items-center gap-2">
-                <span className="text-castle-gold text-2xl">🏰</span>
+              <Link href="/" className="flex items-center gap-3">
+                <img src="/logo.png" alt="Castle Solutions" className="h-10 w-auto brightness-200" />
                 <span className="font-semibold text-lg">Castle Ops</span>
               </Link>
               <div className="flex items-center gap-6">
