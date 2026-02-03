@@ -72,6 +72,23 @@ function ReportForm() {
       return
     }
 
+    // Send email notification
+    try {
+      await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          property: selectedProperty,
+          category: form.category,
+          description: form.description,
+          urgency: form.urgency,
+          reporterType: reporterType === 'owner' ? 'propietario' : 'huesped',
+          reporterName: reporterType === 'owner' ? matchedOwner?.name : form.reporter_name,
+          reporterContact: form.reporter_contact || form.reporter_email
+        })
+      })
+    } catch (e) { /* email notification is best-effort */ }
+
     setSubmitted(true)
     setLoading(false)
   }
@@ -83,7 +100,7 @@ function ReportForm() {
           <CheckCircle className="text-green-600" size={48} />
         </div>
         <h1 className="text-3xl font-semibold text-castle-dark">{t.reportSent[lang]}</h1>
-        <p className="text-gray-500 text-lg">{t.reportSentMsg[lang]}</p>
+        <p className="text-gray-500 text-lg whitespace-pre-line">{t.reportSentMsg[lang]}</p>
         <div className="flex gap-4 mt-4">
           <Link href={`/?lang=${lang}`} className="btn-primary">{t.back[lang]}</Link>
           <button onClick={() => { setSubmitted(false); setStep(1); setReporterType(''); setMatchedOwner(null); setOwnerCode(''); setSelectedProperty('') }} 
@@ -284,3 +301,4 @@ function ReportForm() {
 export default function ReportPage() {
   return <Suspense fallback={<div className="text-center py-20">Loading...</div>}><ReportForm /></Suspense>
 }
+
