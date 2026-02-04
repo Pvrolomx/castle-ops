@@ -19,7 +19,7 @@ export default function Home() {
 
       <img src="/logo.png" alt="Castle Solutions" className="h-24 w-auto" />
 
-      <Link href={`/report?lang=${lang}`}
+      <Link href={`/report?type=owner&lang=${lang}`}
         className="bg-emerald-600 hover:bg-emerald-700 text-white px-12 py-6 rounded-2xl text-2xl font-semibold shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 flex items-center gap-4">
         <AlertTriangle size={32} />
         {t.reportIncident[lang]}
