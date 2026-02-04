@@ -16,7 +16,8 @@ export const OWNERS: PropertyOwner[] = [
   { name: 'John and Joanne', code: '4021', properties: ['Avida 408', 'Cielo 101'] },
   { name: 'Roberto', code: '3336', properties: ['Playa Royal 603', 'Playa Royal 604'] },
   { name: 'Len', code: '7350', properties: ['Playa Royal 103', 'Playa Royal 105'] },
-  { name: 'Daren and Kevin', code: '7486', properties: ['V Estrella 502', 'Su Casita 1', 'Su Casita 2'] },
+  { name: 'Daren and Kevin', code: '7487', properties: ['V Estrella 502'] },
+  { name: 'Daren, Kevin and Doug', code: '7486', properties: ['Casita 1', 'Casita 2'] },
   { name: 'George', code: '6169', properties: ['Villa Magna 373 B'] },
 ]
 
@@ -39,8 +40,8 @@ export const RENTAL_PROPERTIES = [
   'Playa Royal 103',
   'Playa Royal 105',
   'V Estrella 502',
-  'Su Casita 1',
-  'Su Casita 2',
+  'Casita 1',
+  'Casita 2',
 ]
 
 export const CATEGORIES = [
