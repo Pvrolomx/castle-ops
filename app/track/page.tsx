@@ -3,25 +3,43 @@ export const dynamic = 'force-dynamic'
 import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase, Incident } from '@/lib/supabase'
+import { OWNERS } from '@/lib/config'
 import { t, Lang } from '@/lib/i18n'
-import { ArrowLeft, Search } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 function TrackForm() {
   const searchParams = useSearchParams()
   const [lang] = useState<Lang>((searchParams.get('lang') as Lang) || 'es')
-  const [query, setQuery] = useState('')
+  const [code, setCode] = useState('')
+  const [codeError, setCodeError] = useState(false)
+  const [matchedOwner, setMatchedOwner] = useState<typeof OWNERS[0] | null>(null)
   const [results, setResults] = useState<Incident[]>([])
   const [searched, setSearched] = useState(false)
 
-  async function handleSearch(e: React.FormEvent) {
-    e.preventDefault()
-    const { data } = await supabase.from('incidents')
-      .select('*')
-      .or(`reporter_contact.ilike.%${query}%,reporter_name.ilike.%${query}%`)
-      .order('created_at', { ascending: false })
-    setResults(data || [])
-    setSearched(true)
+  async function handleCodeEntry(val: string) {
+    const clean = val.replace(/\D/g, '').slice(0, 4)
+    setCode(clean)
+    setCodeError(false)
+    setMatchedOwner(null)
+    setSearched(false)
+    setResults([])
+
+    if (clean.length === 4) {
+      const owner = OWNERS.find(o => o.code === clean)
+      if (owner) {
+        setMatchedOwner(owner)
+        // Search incidents for all owner properties
+        const { data } = await supabase.from('incidents')
+          .select('*')
+          .in('property_name', owner.properties)
+          .order('created_at', { ascending: false })
+        setResults(data || [])
+        setSearched(true)
+      } else {
+        setCodeError(true)
+      }
+    }
   }
 
   const statusLabel: Record<string, Record<Lang, string>> = {
@@ -39,16 +57,31 @@ function TrackForm() {
 
       <div className="card space-y-6">
         <h1 className="text-2xl font-semibold text-castle-dark text-center">{t.myReports[lang]}</h1>
-        <p className="text-gray-500 text-center">{t.enterEmail[lang]}</p>
+        <p className="text-gray-500 text-center text-sm">
+          {lang === 'es' ? 'Ingresa tu código de 4 dígitos' : 'Enter your 4-digit code'}
+        </p>
 
-        <form onSubmit={handleSearch} className="flex gap-2">
-          <input type="text" placeholder={lang === 'es' ? 'Email, teléfono o nombre...' : 'Email, phone or name...'}
-            className="flex-1 border-2 rounded-xl px-4 py-3"
-            value={query} onChange={e => setQuery(e.target.value)} />
-          <button type="submit" className="btn-primary px-6">
-            <Search size={20} />
-          </button>
-        </form>
+        <div className="flex justify-center">
+          <input type="text" inputMode="numeric" maxLength={4}
+            className={`border-2 rounded-xl px-6 py-4 text-center text-3xl tracking-[0.5em] w-48 ${codeError ? 'border-red-500 shake' : matchedOwner ? 'border-green-500' : ''}`}
+            placeholder="••••"
+            value={code}
+            onChange={e => handleCodeEntry(e.target.value)} />
+        </div>
+
+        {codeError && (
+          <p className="text-red-500 text-center text-sm">
+            {lang === 'es' ? 'Código no encontrado' : 'Code not found'}
+          </p>
+        )}
+
+        {matchedOwner && (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
+            <p className="text-green-800 font-medium">
+              {lang === 'es' ? 'Bienvenido' : 'Welcome'}, {matchedOwner.name} 👋
+            </p>
+          </div>
+        )}
 
         {searched && results.length === 0 && (
           <p className="text-center text-gray-500">{t.noIncidents[lang]}</p>
