@@ -3,10 +3,10 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase, Incident, Provider } from '@/lib/supabase'
-import { ADMIN_PIN } from '@/lib/config'
+import { ADMIN_PIN, OWNERS } from '@/lib/config'
 import { t, Lang } from '@/lib/i18n'
 import Link from 'next/link'
-import { Lock, AlertTriangle, Users, CheckCircle, Clock, Plus, Search, Send } from 'lucide-react'
+import { Lock, AlertTriangle, Users, CheckCircle, Clock, Plus, Search, Send, Key } from 'lucide-react'
 
 function AdminContent() {
   const searchParams = useSearchParams()
@@ -14,7 +14,7 @@ function AdminContent() {
   const [authenticated, setAuthenticated] = useState(false)
   const [pin, setPin] = useState('')
   const [pinError, setPinError] = useState(false)
-  const [tab, setTab] = useState<'dashboard' | 'incidents' | 'providers'>('dashboard')
+  const [tab, setTab] = useState<'dashboard' | 'incidents' | 'providers' | 'pins'>('dashboard')
   const [incidents, setIncidents] = useState<Incident[]>([])
   const [providers, setProviders] = useState<Provider[]>([])
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null)
@@ -23,6 +23,7 @@ function AdminContent() {
   const [newStatus, setNewStatus] = useState('')
   const [filter, setFilter] = useState({ status: '', search: '' })
   const [loading, setLoading] = useState(true)
+  const [pinSearch, setPinSearch] = useState('')
 
   // Provider form
   const [showProvForm, setShowProvForm] = useState(false)
@@ -133,6 +134,10 @@ function AdminContent() {
     return true
   })
 
+  const filteredOwners = OWNERS.filter(o =>
+    !pinSearch || o.name.toLowerCase().includes(pinSearch.toLowerCase()) || o.properties.some(p => p.toLowerCase().includes(pinSearch.toLowerCase())) || o.code.includes(pinSearch)
+  )
+
   // Incident Detail Modal
   if (selectedIncident) {
     return (
@@ -216,12 +221,13 @@ function AdminContent() {
   return (
     <div className="space-y-6">
       {/* Admin Nav */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          {(['dashboard', 'incidents', 'providers'] as const).map(t2 => (
+      <div className="flex items-center justify-between flex-wrap gap-2">
+        <div className="flex gap-2 flex-wrap">
+          {(['dashboard', 'incidents', 'providers', 'pins'] as const).map(t2 => (
             <button key={t2} onClick={() => setTab(t2)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${tab === t2 ? 'bg-castle-gold text-white' : 'bg-white hover:bg-gray-100'}`}>
-              {t2 === 'dashboard' ? t.dashboard[lang] : t2 === 'incidents' ? t.incidents[lang] : t.providers[lang]}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${tab === t2 ? 'bg-castle-gold text-white' : 'bg-white hover:bg-gray-100'}`}>
+              {t2 === 'pins' && <Key size={16} />}
+              {t2 === 'dashboard' ? t.dashboard[lang] : t2 === 'incidents' ? t.incidents[lang] : t2 === 'providers' ? t.providers[lang] : 'PINs'}
             </button>
           ))}
         </div>
@@ -304,6 +310,57 @@ function AdminContent() {
                 {p.email && <p className="text-sm text-gray-600">✉️ {p.email}</p>}
               </div>
             ))}
+          </div>
+        </>
+      )}
+
+      {/* PINs Tab */}
+      {tab === 'pins' && (
+        <>
+          <div className="card">
+            <div className="flex items-center gap-3 mb-6">
+              <Key className="text-castle-gold" size={24} />
+              <h2 className="text-xl font-semibold">{lang === 'es' ? 'Códigos de Propietarios' : 'Owner Codes'}</h2>
+            </div>
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
+              <input type="text" placeholder={lang === 'es' ? 'Buscar por nombre, propiedad o PIN...' : 'Search by name, property or PIN...'}
+                className="w-full pl-10 pr-4 py-2 border rounded-lg"
+                value={pinSearch} onChange={e => setPinSearch(e.target.value)} />
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b-2 border-gray-200">
+                    <th className="pb-3 text-sm font-semibold text-gray-600">{lang === 'es' ? 'Propietario' : 'Owner'}</th>
+                    <th className="pb-3 text-sm font-semibold text-gray-600">PIN</th>
+                    <th className="pb-3 text-sm font-semibold text-gray-600">{lang === 'es' ? 'Propiedades' : 'Properties'}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredOwners.map((owner, i) => (
+                    <tr key={i} className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="py-3 font-medium text-gray-800">{owner.name}</td>
+                      <td className="py-3">
+                        <span className="inline-block bg-castle-gold/10 text-castle-gold font-mono font-bold px-3 py-1 rounded-lg text-lg tracking-wider">
+                          {owner.code}
+                        </span>
+                      </td>
+                      <td className="py-3">
+                        <div className="flex flex-wrap gap-1">
+                          {owner.properties.map(p => (
+                            <span key={p} className="inline-block bg-gray-100 text-gray-700 text-sm px-2 py-0.5 rounded">{p}</span>
+                          ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-gray-400 mt-4 text-center">
+              {lang === 'es' ? `${OWNERS.length} propietarios registrados` : `${OWNERS.length} registered owners`}
+            </p>
           </div>
         </>
       )}
