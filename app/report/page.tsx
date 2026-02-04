@@ -11,18 +11,31 @@ import Link from 'next/link'
 function ReportForm() {
   const searchParams = useSearchParams()
   const [lang, setLang] = useState<Lang>((searchParams.get('lang') as Lang) || 'es')
-  const [step, setStep] = useState(1)
+  const preType = searchParams.get('type') || ''
+  const preProperty = searchParams.get('property') || ''
+
+  // If coming from guide (?type=renter&property=X), skip straight to renter flow
+  const isFromGuide = preType === 'renter' && preProperty
+  
+  // If coming from home (?type=owner), skip step 1 and go to code entry
+  const isFromHome = preType === 'owner'
+
+  const initialStep = isFromGuide ? 3 : isFromHome ? 2 : 2
+  const initialType = isFromGuide ? 'renter' : 'owner'
+  const initialProperty = isFromGuide ? preProperty : ''
+
+  const [step, setStep] = useState(initialStep)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const [reporterType, setReporterType] = useState<'renter' | 'owner' | ''>('')
+  const [reporterType] = useState<'renter' | 'owner'>(initialType as 'renter' | 'owner')
   
   // Owner code flow
   const [ownerCode, setOwnerCode] = useState('')
   const [ownerError, setOwnerError] = useState(false)
   const [matchedOwner, setMatchedOwner] = useState<typeof OWNERS[0] | null>(null)
   
-  const [selectedProperty, setSelectedProperty] = useState('')
+  const [selectedProperty, setSelectedProperty] = useState(initialProperty)
   const [form, setForm] = useState({
     category: 'plomeria',
     description: '',
@@ -31,26 +44,6 @@ function ReportForm() {
     reporter_contact: '',
     reporter_email: ''
   })
-
-  function validateOwnerCode() {
-    const owner = OWNERS.find(o => o.code === ownerCode)
-    if (owner) {
-      setMatchedOwner(owner)
-      setOwnerError(false)
-      if (owner.properties.length === 1) {
-        setSelectedProperty(owner.properties[0])
-      }
-    } else {
-      setOwnerError(true)
-      setMatchedOwner(null)
-    }
-  }
-
-  function proceedFromOwner() {
-    if (matchedOwner && selectedProperty) {
-      setStep(3)
-    }
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -103,7 +96,7 @@ function ReportForm() {
         <p className="text-gray-500 text-lg whitespace-pre-line">{t.reportSentMsg[lang]}</p>
         <div className="flex gap-4 mt-4">
           <Link href={`/?lang=${lang}`} className="btn-primary">{t.back[lang]}</Link>
-          <button onClick={() => { setSubmitted(false); setStep(1); setReporterType(''); setMatchedOwner(null); setOwnerCode(''); setSelectedProperty('') }} 
+          <button onClick={() => { setSubmitted(false); setStep(2); setOwnerCode(''); setMatchedOwner(null); setSelectedProperty('') }} 
             className="btn-secondary">{t.newReport[lang]}</button>
         </div>
       </div>
@@ -119,30 +112,11 @@ function ReportForm() {
         </button>
       </div>
 
-      <Link href={`/?lang=${lang}`} className="flex items-center gap-2 text-gray-500 hover:text-castle-dark mb-6">
+      <Link href={isFromGuide ? 'javascript:history.back()' : `/?lang=${lang}`} className="flex items-center gap-2 text-gray-500 hover:text-castle-dark mb-6">
         <ArrowLeft size={20} /> {t.back[lang]}
       </Link>
 
-      {/* Step 1: Who are you? */}
-      {step === 1 && (
-        <div className="card space-y-6">
-          <h1 className="text-2xl font-semibold text-castle-dark text-center">{t.whoAreYou[lang]}</h1>
-          <div className="grid grid-cols-2 gap-4">
-            <button onClick={() => { setReporterType('owner'); setStep(2) }}
-              className="p-8 border-2 rounded-xl hover:border-castle-gold hover:bg-amber-50 transition-all text-center">
-              <span className="text-4xl block mb-3">🏠</span>
-              <span className="font-semibold text-lg">{t.owner[lang]}</span>
-            </button>
-            <button onClick={() => { setReporterType('renter'); setStep(2) }}
-              className="p-8 border-2 rounded-xl hover:border-castle-gold hover:bg-amber-50 transition-all text-center">
-              <span className="text-4xl block mb-3">🧳</span>
-              <span className="font-semibold text-lg">{t.renter[lang]}</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Step 2: Property selection */}
+      {/* Step 2: Owner code entry (now the first step from home) */}
       {step === 2 && reporterType === 'owner' && (
         <div className="card space-y-6">
           <h1 className="text-2xl font-semibold text-castle-dark text-center">
@@ -212,11 +186,12 @@ function ReportForm() {
             </div>
           )}
 
-          <button onClick={() => { setStep(1); setReporterType(''); setOwnerCode(''); setMatchedOwner(null) }}
-            className="w-full text-gray-400 hover:text-gray-600 py-2">{t.back[lang]}</button>
+          <Link href={`/?lang=${lang}`}
+            className="block w-full text-center text-gray-400 hover:text-gray-600 py-2">{t.back[lang]}</Link>
         </div>
       )}
 
+      {/* Renter flow from guide - select property (pre-selected) */}
       {step === 2 && reporterType === 'renter' && (
         <div className="card space-y-6">
           <h1 className="text-2xl font-semibold text-castle-dark text-center">{t.selectProperty[lang]}</h1>
@@ -228,7 +203,7 @@ function ReportForm() {
               </button>
             ))}
           </div>
-          <button onClick={() => { setStep(1); setReporterType('') }}
+          <button onClick={() => history.back()}
             className="w-full text-gray-400 hover:text-gray-600 py-2">{t.back[lang]}</button>
         </div>
       )}
@@ -290,7 +265,7 @@ function ReportForm() {
             {loading ? t.sending[lang] : t.send[lang]}
           </button>
 
-          <button type="button" onClick={() => setStep(2)}
+          <button type="button" onClick={() => { if (isFromGuide) history.back(); else setStep(2) }}
             className="w-full text-gray-400 hover:text-gray-600 py-2">{t.back[lang]}</button>
         </form>
       )}
@@ -301,4 +276,3 @@ function ReportForm() {
 export default function ReportPage() {
   return <Suspense fallback={<div className="text-center py-20">Loading...</div>}><ReportForm /></Suspense>
 }
-
