@@ -1,7 +1,8 @@
 export type Lang = 'es' | 'en'
 
 export const t: Record<string, Record<Lang, string>> = {
-  reportIncident: { es: 'Reportar Incidencia', en: 'Report Incident' },
+  reportIncident: { es: 'Reportar un Problema', en: 'Report an Issue' },
+  requestService: { es: 'Solicitar Servicio', en: 'Request Service' },
   whoAreYou: { es: '¿Quién reporta?', en: 'Who is reporting?' },
   owner: { es: 'Propietario', en: 'Owner' },
   renter: { es: 'Huésped / Rentista', en: 'Guest / Renter' },
@@ -11,9 +12,12 @@ export const t: Record<string, Record<Lang, string>> = {
   phone: { es: 'Teléfono', en: 'Phone' },
   email: { es: 'Correo electrónico', en: 'Email' },
   category: { es: 'Categoría del problema', en: 'Problem category' },
+  requestCategory: { es: 'Tipo de servicio', en: 'Service type' },
   description: { es: 'Describe el problema', en: 'Describe the issue' },
+  requestDescription: { es: 'Describe lo que necesitas', en: 'Describe what you need' },
   urgency: { es: 'Urgencia', en: 'Urgency' },
   send: { es: 'Enviar Reporte', en: 'Submit Report' },
+  sendRequest: { es: 'Enviar Solicitud', en: 'Submit Request' },
   sending: { es: 'Enviando...', en: 'Sending...' },
   trackIncident: { es: 'Seguir mi reporte', en: 'Track my report' },
   status: { es: 'Estado', en: 'Status' },
@@ -29,7 +33,9 @@ export const t: Record<string, Record<Lang, string>> = {
   enter: { es: 'Entrar', en: 'Enter' },
   wrongPin: { es: 'PIN incorrecto', en: 'Wrong PIN' },
   reportSent: { es: '¡Reporte recibido!', en: 'Report received!' },
+  requestSent: { es: '¡Solicitud recibida!', en: 'Request received!' },
   reportSentMsg: { es: 'Nuestro equipo lo atenderá a la brevedad posible.\nTe contactaremos para cualquier actualización.\n\n¡Gracias por tu confianza!', en: 'Our team will attend to it as soon as possible.\nWe will contact you with any updates.\n\nThank you for your trust!' },
+  requestSentMsg: { es: 'Hemos recibido tu solicitud.\nNos pondremos en contacto contigo para coordinar.\n\n¡Gracias!', en: 'We have received your request.\nWe will contact you to coordinate.\n\nThank you!' },
   newReport: { es: 'Nuevo Reporte', en: 'New Report' },
   contactInfo: { es: 'Información de contacto', en: 'Contact information' },
   back: { es: 'Volver', en: 'Back' },
