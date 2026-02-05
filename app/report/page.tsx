@@ -158,7 +158,7 @@ function ReportForm() {
           {matchedOwner && (
             <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center space-y-3">
               <p className="text-green-800 font-medium text-lg">
-                {lang === 'es' ? 'Bienvenido' : 'Welcome'}, {matchedOwner.name} 👋
+                {matchedOwner.greeting?.[lang] || (lang === 'es' ? 'Bienvenido' : 'Welcome')}, {matchedOwner.name} 👋
               </p>
               
               {matchedOwner.properties.length === 1 ? (
