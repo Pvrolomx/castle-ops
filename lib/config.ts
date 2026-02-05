@@ -4,21 +4,22 @@ export type PropertyOwner = {
   name: string
   code: string
   properties: string[]
+  greeting?: { es: string; en: string }
 }
 
 export const OWNERS: PropertyOwner[] = [
-  { name: 'Connie', code: '1701', properties: ['Nitta 102'] },
-  { name: 'Herb and Ann', code: '9042', properties: ['Mismaloya 5705', 'Mismaloya 7202'] },
-  { name: 'Jay and Stephen', code: '9686', properties: ['Sagitario'] },
-  { name: 'John and Brenda', code: '7060', properties: ['Villa Magna 352 A', 'Villa Magna 352 B'] },
-  { name: 'Scott and Emy', code: '4537', properties: ['Villa Magna 336'] },
-  { name: 'Russell', code: '7048', properties: ['Villa Magna 253 A'] },
-  { name: 'John and Joanne', code: '4021', properties: ['Avida 408', 'Cielo 101'] },
-  { name: 'Roberto', code: '3336', properties: ['Playa Royal 603', 'Playa Royal 604'] },
-  { name: 'Len', code: '7350', properties: ['Playa Royal 103', 'Playa Royal 105'] },
-  { name: 'Daren and Kevin', code: '7487', properties: ['V Estrella 502'] },
-  { name: 'Daren, Kevin and Doug', code: '7486', properties: ['Casita 1', 'Casita 2'] },
-  { name: 'George', code: '6169', properties: ['Villa Magna 373 B'] },
+  { name: 'Connie', code: '1701', properties: ['Nitta 102'], greeting: { es: 'Bienvenida', en: 'Welcome' } },
+  { name: 'Herb and Ann', code: '9042', properties: ['Mismaloya 5705', 'Mismaloya 7202'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
+  { name: 'Jay and Stephen', code: '9686', properties: ['Sagitario'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
+  { name: 'John and Brenda', code: '7060', properties: ['Villa Magna 352 A', 'Villa Magna 352 B'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
+  { name: 'Scott and Emy', code: '4537', properties: ['Villa Magna 336'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
+  { name: 'Russell', code: '7048', properties: ['Villa Magna 253 A'], greeting: { es: 'Bienvenido', en: 'Welcome' } },
+  { name: 'John and Joanne', code: '4021', properties: ['Avida 408', 'Cielo 101'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
+  { name: 'Roberto', code: '3336', properties: ['Playa Royal 603', 'Playa Royal 604'], greeting: { es: 'Bienvenido', en: 'Welcome' } },
+  { name: 'Len', code: '7350', properties: ['Playa Royal 103', 'Playa Royal 105'], greeting: { es: 'Bienvenido', en: 'Welcome' } },
+  { name: 'Daren and Kevin', code: '7487', properties: ['V Estrella 502'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
+  { name: 'Daren, Kevin and Doug', code: '7486', properties: ['Casita 1', 'Casita 2'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
+  { name: 'George', code: '6169', properties: ['Villa Magna 373 B'], greeting: { es: 'Bienvenido', en: 'Welcome' } },
 ]
 
 export const ALL_PROPERTIES = OWNERS.flatMap(o => o.properties)
