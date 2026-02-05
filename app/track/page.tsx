@@ -78,7 +78,7 @@ function TrackForm() {
         {matchedOwner && (
           <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
             <p className="text-green-800 font-medium">
-              {lang === 'es' ? 'Bienvenido' : 'Welcome'}, {matchedOwner.name} 👋
+              {matchedOwner.greeting?.[lang] || (lang === 'es' ? 'Bienvenido' : 'Welcome')}, {matchedOwner.name} 👋
             </p>
           </div>
         )}
