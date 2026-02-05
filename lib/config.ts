@@ -2,7 +2,7 @@ export const ADMIN_PIN = '1978'
 
 export type PropertyOwner = {
   name: string
-  code: string  // 4-digit PIN
+  code: string
   properties: string[]
 }
 
@@ -47,8 +47,16 @@ export const RENTAL_PROPERTIES = [
 export const CATEGORIES = [
   { value: 'plomeria', label: { es: '🔧 Plomería', en: '🔧 Plumbing' } },
   { value: 'electricidad', label: { es: '⚡ Electricidad', en: '⚡ Electrical' } },
-  { value: 'limpieza', label: { es: '🧹 Limpieza', en: '🧹 Cleaning' } },
   { value: 'ac', label: { es: '❄️ Aire Acondicionado', en: '❄️ AC' } },
+  { value: 'otro', label: { es: '📦 Otro', en: '📦 Other' } },
+]
+
+export const REQUEST_CATEGORIES = [
+  { value: 'limpieza', label: { es: '🧹 Limpieza', en: '🧹 Cleaning' } },
+  { value: 'mantenimiento', label: { es: '🔧 Mantenimiento', en: '🔧 Maintenance' } },
+  { value: 'compras', label: { es: '🛒 Compras', en: '🛒 Shopping' } },
+  { value: 'mejoras', label: { es: '📐 Mejoras', en: '📐 Improvements' } },
+  { value: 'jardineria', label: { es: '🌿 Jardinería', en: '🌿 Landscaping' } },
   { value: 'otro', label: { es: '📦 Otro', en: '📦 Other' } },
 ]
 
