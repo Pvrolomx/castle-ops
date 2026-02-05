@@ -163,6 +163,22 @@ function AdminContent() {
                 <span>👤 {selectedIncident.reporter_type}: {selectedIncident.reporter_name || '—'}</span>
                 {selectedIncident.reporter_contact && <span>📞 {selectedIncident.reporter_contact}</span>}
               </div>
+              {selectedIncident.photo_url && (
+                <div className="border-t pt-3 mt-3">
+                  <p className="text-sm font-medium text-gray-700 mb-2">📸 {lang === 'es' ? 'Fotos/Videos adjuntos' : 'Attached Photos/Videos'}</p>
+                  <div className="flex gap-2 flex-wrap">
+                    {selectedIncident.photo_url.split(',').map((url: string, i: number) => (
+                      <a key={i} href={url.trim()} target="_blank" rel="noopener noreferrer" className="block w-24 h-24 rounded-lg overflow-hidden border-2 border-gray-200 hover:border-castle-gold transition-colors">
+                        {url.trim().match(/\.(mp4|mov|webm)/i) ? (
+                          <div className="w-full h-full bg-gray-100 flex items-center justify-center text-2xl">🎬</div>
+                        ) : (
+                          <img src={url.trim()} alt={`Foto ${i+1}`} className="w-full h-full object-cover" />
+                        )}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             {/* Timeline */}
             <div className="card">
