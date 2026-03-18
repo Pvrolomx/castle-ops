@@ -4,13 +4,13 @@ import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase, Incident } from '@/lib/supabase'
 import { OWNERS } from '@/lib/config'
-import { t, Lang } from '@/lib/i18n'
+import { t, Lang, LANG_OPTIONS } from '@/lib/i18n'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 
 function TrackForm() {
   const searchParams = useSearchParams()
-  const [lang] = useState<Lang>((searchParams.get('lang') as Lang) || 'es')
+  const [lang, setLang] = useState<Lang>((searchParams.get('lang') as Lang) || 'es')
   const [code, setCode] = useState('')
   const [codeError, setCodeError] = useState(false)
   const [matchedOwner, setMatchedOwner] = useState<typeof OWNERS[0] | null>(null)
@@ -43,14 +43,24 @@ function TrackForm() {
   }
 
   const statusLabel: Record<string, Record<Lang, string>> = {
-    nuevo: { es: '📋 Recibido', en: '📋 Received' },
-    asignado: { es: '🔄 En progreso', en: '🔄 In progress' },
-    en_progreso: { es: '🔄 En progreso', en: '🔄 In progress' },
-    resuelto: { es: '✅ Resuelto', en: '✅ Resolved' }
+    nuevo: { es: '📋 Recibido', en: '📋 Received', fr: '📋 Reçu' },
+    asignado: { es: '🔄 En progreso', en: '🔄 In progress', fr: '🔄 En cours' },
+    en_progreso: { es: '🔄 En progreso', en: '🔄 In progress', fr: '🔄 En cours' },
+    resuelto: { es: '✅ Resuelto', en: '✅ Resolved', fr: '✅ Résolu' }
   }
+
+  const currentIdx = LANG_OPTIONS.findIndex(o => o.code === lang)
+  const nextLang = LANG_OPTIONS[(currentIdx + 1) % LANG_OPTIONS.length]
 
   return (
     <div className="max-w-lg mx-auto">
+      <div className="fixed top-4 right-4 z-50">
+        <button onClick={() => setLang(nextLang.code)}
+          className="bg-white shadow-md rounded-full px-4 py-2 text-sm font-medium hover:shadow-lg transition-shadow">
+          {nextLang.label}
+        </button>
+      </div>
+
       <Link href={`/?lang=${lang}`} className="flex items-center gap-2 text-gray-500 hover:text-castle-dark mb-6">
         <ArrowLeft size={20} /> {t.back[lang]}
       </Link>
@@ -58,7 +68,7 @@ function TrackForm() {
       <div className="card space-y-6">
         <h1 className="text-2xl font-semibold text-castle-dark text-center">{t.myReports[lang]}</h1>
         <p className="text-gray-500 text-center text-sm">
-          {lang === 'es' ? 'Ingresa tu código de 4 dígitos' : 'Enter your 4-digit code'}
+          {lang === 'es' ? 'Ingresa tu código de 4 dígitos' : lang === 'en' ? 'Enter your 4-digit code' : 'Entrez votre code à 4 chiffres'}
         </p>
 
         <div className="flex justify-center">
@@ -71,14 +81,14 @@ function TrackForm() {
 
         {codeError && (
           <p className="text-red-500 text-center text-sm">
-            {lang === 'es' ? 'Código no encontrado' : 'Code not found'}
+            {lang === 'es' ? 'Código no encontrado' : lang === 'en' ? 'Code not found' : 'Code non trouvé'}
           </p>
         )}
 
         {matchedOwner && (
           <div className="bg-green-50 border border-green-200 rounded-xl p-3 text-center">
             <p className="text-green-800 font-medium">
-              {matchedOwner.greeting?.[lang] || (lang === 'es' ? 'Bienvenido' : 'Welcome')}, {matchedOwner.name} 👋
+              {matchedOwner.greeting?.[lang] || (lang === 'es' ? 'Bienvenido' : lang === 'en' ? 'Welcome' : 'Bienvenue')}, {matchedOwner.name} 👋
             </p>
           </div>
         )}
