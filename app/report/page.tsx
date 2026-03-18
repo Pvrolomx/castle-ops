@@ -150,7 +150,19 @@ function ReportForm() {
         <p className="text-gray-500 text-lg whitespace-pre-line">{t.reportSentMsg[lang]}</p>
         <div className="flex gap-4 mt-4">
           <Link href={`/?lang=${lang}`} className="btn-primary">{t.back[lang]}</Link>
-          <button onClick={() => { setSubmitted(false); setStep(2); setOwnerCode(''); setMatchedOwner(null); setSelectedProperty(''); setFiles([]); setPreviews([]) }}
+          <button onClick={() => { 
+            setSubmitted(false); 
+            setStep(3); 
+            // Mantener matchedOwner y ownerCode - solo resetear formulario
+            if (matchedOwner?.properties.length === 1) {
+              setSelectedProperty(matchedOwner.properties[0]);
+            } else {
+              setSelectedProperty('');
+            }
+            setForm({ category: 'plomeria', description: '', urgency: 'normal', reporter_name: '', reporter_contact: '', reporter_email: '' });
+            setFiles([]); 
+            setPreviews([]);
+          }}
             className="btn-secondary">{t.newReport[lang]}</button>
         </div>
       </div>
