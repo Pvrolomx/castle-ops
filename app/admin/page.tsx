@@ -4,13 +4,13 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase, Incident, Provider } from '@/lib/supabase'
 import { ADMIN_PIN, OWNERS } from '@/lib/config'
-import { t, Lang } from '@/lib/i18n'
+import { t, Lang, LANG_OPTIONS } from '@/lib/i18n'
 import Link from 'next/link'
 import { Lock, AlertTriangle, Users, CheckCircle, Clock, Plus, Search, Send, Key } from 'lucide-react'
 
 function AdminContent() {
   const searchParams = useSearchParams()
-  const [lang] = useState<Lang>((searchParams.get('lang') as Lang) || 'es')
+  const [lang, setLang] = useState<Lang>((searchParams.get('lang') as Lang) || 'es')
   const [authenticated, setAuthenticated] = useState(false)
   const [pin, setPin] = useState('')
   const [pinError, setPinError] = useState(false)
@@ -247,7 +247,17 @@ function AdminContent() {
             </button>
           ))}
         </div>
-        <Link href={`/?lang=${lang}`} className="text-gray-400 hover:text-gray-600 text-sm">{t.back[lang]}</Link>
+        <div className="flex items-center gap-3">
+          <button onClick={() => {
+            const currentIdx = LANG_OPTIONS.findIndex(o => o.code === lang)
+            const nextLang = LANG_OPTIONS[(currentIdx + 1) % LANG_OPTIONS.length]
+            setLang(nextLang.code)
+          }}
+            className="bg-white shadow-sm rounded-full px-3 py-1.5 text-sm font-medium hover:shadow-md transition-shadow">
+            {LANG_OPTIONS[(LANG_OPTIONS.findIndex(o => o.code === lang) + 1) % LANG_OPTIONS.length].label}
+          </button>
+          <Link href={`/?lang=${lang}`} className="text-gray-400 hover:text-gray-600 text-sm">{t.back[lang]}</Link>
+        </div>
       </div>
 
       {/* Dashboard Tab */}
