@@ -224,7 +224,7 @@ function AdminContent() {
                 <select className="w-full border rounded-lg px-3 py-2"
                   onChange={e => e.target.value && assignProvider(selectedIncident.id, e.target.value)}>
                   <option value="">Asignar proveedor...</option>
-                  {providers.filter(p => p.active).map(p => <option key={p.id} value={p.id}>{p.name} ({p.category})</option>)}
+                  {providers.map(p => <option key={p.id} value={p.id}>{p.name} ({p.category})</option>)}
                 </select>
               )}
             </div>
@@ -387,3 +387,4 @@ function AdminContent() {
 export default function AdminPage() {
   return <Suspense fallback={<div className="text-center py-20">Loading...</div>}><AdminContent /></Suspense>
 }
+
