@@ -4,22 +4,22 @@ export type PropertyOwner = {
   name: string
   code: string
   properties: string[]
-  greeting?: { es: string; en: string }
+  greeting?: { es: string; en: string; fr: string }
 }
 
 export const OWNERS: PropertyOwner[] = [
-  { name: 'Connie', code: '1701', properties: ['Nitta 102'], greeting: { es: 'Bienvenida', en: 'Welcome' } },
-  { name: 'Herb and Ann', code: '9042', properties: ['Mismaloya 5705', 'Mismaloya 7202'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
-  { name: 'Jay and Stephen', code: '9686', properties: ['Sagitario'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
-  { name: 'John and Brenda', code: '7060', properties: ['Villa Magna 352 A', 'Villa Magna 352 B'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
-  { name: 'Scott and Emy', code: '4537', properties: ['Villa Magna 336'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
-  { name: 'Russell', code: '7048', properties: ['Villa Magna 253 A'], greeting: { es: 'Bienvenido', en: 'Welcome' } },
-  { name: 'John and Joanne', code: '4021', properties: ['Avida 408', 'Cielo 101'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
-  { name: 'Roberto', code: '3336', properties: ['Playa Royal 603', 'Playa Royal 604'], greeting: { es: 'Bienvenido', en: 'Welcome' } },
-  { name: 'Len', code: '7350', properties: ['Playa Royal 103', 'Playa Royal 105'], greeting: { es: 'Bienvenido', en: 'Welcome' } },
-  { name: 'Daren and Kevin', code: '7487', properties: ['V Estrella 502'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
-  { name: 'Daren, Kevin and Doug', code: '7486', properties: ['Casita 1', 'Casita 2'], greeting: { es: 'Bienvenidos', en: 'Welcome' } },
-  { name: 'George', code: '6169', properties: ['Villa Magna 373 B'], greeting: { es: 'Bienvenido', en: 'Welcome' } },
+  { name: 'Connie', code: '1701', properties: ['Nitta 102'], greeting: { es: 'Bienvenida', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Herb and Ann', code: '9042', properties: ['Mismaloya 5705', 'Mismaloya 7202'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Jay and Stephen', code: '9686', properties: ['Sagitario'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'John and Brenda', code: '7060', properties: ['Villa Magna 352 A', 'Villa Magna 352 B'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Scott and Emy', code: '4537', properties: ['Villa Magna 336'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Russell', code: '7048', properties: ['Villa Magna 253 A'], greeting: { es: 'Bienvenido', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'John and Joanne', code: '4021', properties: ['Avida 408', 'Cielo 101'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Roberto', code: '3336', properties: ['Playa Royal 603', 'Playa Royal 604'], greeting: { es: 'Bienvenido', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Len', code: '7350', properties: ['Playa Royal 103', 'Playa Royal 105'], greeting: { es: 'Bienvenido', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Daren and Kevin', code: '7487', properties: ['V Estrella 502'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Daren, Kevin and Doug', code: '7486', properties: ['Casita 1', 'Casita 2'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'George', code: '6169', properties: ['Villa Magna 373 B'], greeting: { es: 'Bienvenido', en: 'Welcome', fr: 'Bienvenue' } },
 ]
 
 export const ALL_PROPERTIES = OWNERS.flatMap(o => o.properties)
@@ -46,24 +46,24 @@ export const RENTAL_PROPERTIES = [
 ]
 
 export const CATEGORIES = [
-  { value: 'plomeria', label: { es: '🔧 Plomería', en: '🔧 Plumbing' } },
-  { value: 'electricidad', label: { es: '⚡ Electricidad', en: '⚡ Electrical' } },
-  { value: 'ac', label: { es: '❄️ Aire Acondicionado', en: '❄️ AC' } },
-  { value: 'otro', label: { es: '📦 Otro', en: '📦 Other' } },
+  { value: 'plomeria', label: { es: '🔧 Plomería', en: '🔧 Plumbing', fr: '🔧 Plomberie' } },
+  { value: 'electricidad', label: { es: '⚡ Electricidad', en: '⚡ Electrical', fr: '⚡ Électricité' } },
+  { value: 'ac', label: { es: '❄️ Aire Acondicionado', en: '❄️ AC', fr: '❄️ Climatisation' } },
+  { value: 'otro', label: { es: '📦 Otro', en: '📦 Other', fr: '📦 Autre' } },
 ]
 
 export const REQUEST_CATEGORIES = [
-  { value: 'limpieza', label: { es: '🧹 Limpieza', en: '🧹 Cleaning' } },
-  { value: 'mantenimiento', label: { es: '🔧 Mantenimiento', en: '🔧 Maintenance' } },
-  { value: 'compras', label: { es: '🛒 Compras', en: '🛒 Shopping' } },
-  { value: 'mejoras', label: { es: '📐 Mejoras', en: '📐 Improvements' } },
-  { value: 'jardineria', label: { es: '🌿 Jardinería', en: '🌿 Landscaping' } },
-  { value: 'otro', label: { es: '📦 Otro', en: '📦 Other' } },
+  { value: 'limpieza', label: { es: '🧹 Limpieza', en: '🧹 Cleaning', fr: '🧹 Nettoyage' } },
+  { value: 'mantenimiento', label: { es: '🔧 Mantenimiento', en: '🔧 Maintenance', fr: '🔧 Entretien' } },
+  { value: 'compras', label: { es: '🛒 Compras', en: '🛒 Shopping', fr: '🛒 Achats' } },
+  { value: 'mejoras', label: { es: '📐 Mejoras', en: '📐 Improvements', fr: '📐 Améliorations' } },
+  { value: 'jardineria', label: { es: '🌿 Jardinería', en: '🌿 Landscaping', fr: '🌿 Jardinage' } },
+  { value: 'otro', label: { es: '📦 Otro', en: '📦 Other', fr: '📦 Autre' } },
 ]
 
 export const URGENCY = [
-  { value: 'baja', label: { es: '🟢 Baja', en: '🟢 Low' } },
-  { value: 'normal', label: { es: '🔵 Normal', en: '🔵 Normal' } },
-  { value: 'alta', label: { es: '🟠 Alta', en: '🟠 High' } },
-  { value: 'urgente', label: { es: '🔴 Urgente', en: '🔴 Urgent' } },
+  { value: 'baja', label: { es: '🟢 Baja', en: '🟢 Low', fr: '🟢 Faible' } },
+  { value: 'normal', label: { es: '🔵 Normal', en: '🔵 Normal', fr: '🔵 Normal' } },
+  { value: 'alta', label: { es: '🟠 Alta', en: '🟠 High', fr: '🟠 Élevée' } },
+  { value: 'urgente', label: { es: '🔴 Urgente', en: '🔴 Urgent', fr: '🔴 Urgent' } },
 ]
