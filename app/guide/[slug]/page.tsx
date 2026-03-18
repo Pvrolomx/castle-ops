@@ -3,27 +3,28 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ChevronDown, X } from 'lucide-react'
+import { Lang, LANG_OPTIONS } from '@/lib/i18n'
 
 type PropertyData = {
   name: string
-  sections: { icon: string; title: { es: string; en: string }; content: { es: string; en: string }; videoUrl?: string }[]
+  sections: { icon: string; title: { es: string; en: string; fr?: string }; content: { es: string; en: string; fr?: string }; videoUrl?: string }[]
 }
 
 const PROPERTY_DATA: Record<string, PropertyData> = {
   'villa-magna-253a': {
     name: 'Villa Magna 253 A',
     sections: [
-      { icon: '📶', title: { es: 'WiFi', en: 'WiFi' }, content: { es: 'Red: VillaMagna253A\nContraseña: Pendiente', en: 'Network: VillaMagna253A\nPassword: Pending' } },
-      { icon: '📺', title: { es: 'Televisión', en: 'Television' }, content: { es: 'Smart TV con Netflix, Prime Video y Disney+.\nUse el control remoto para cambiar entre apps.', en: 'Smart TV with Netflix, Prime Video and Disney+.\nUse the remote to switch between apps.' } },
-      { icon: '🔐', title: { es: 'Caja Fuerte', en: 'Safe' }, content: { es: 'Ubicada en el closet principal.\n1. Abra la puerta\n2. Ingrese un código de 4 dígitos\n3. Presione el botón verde\n4. Para abrir: ingrese su código y presione el botón verde', en: 'Located in the main closet.\n1. Open the door\n2. Enter a 4-digit code\n3. Press the green button\n4. To open: enter your code and press the green button' } },
-      { icon: '🚪', title: { es: 'Acceso / Puerta', en: 'Access / Door' }, content: { es: 'Código de acceso: Pendiente\nLlave física disponible en recepción.', en: 'Access code: Pending\nPhysical key available at reception.' } },
-      { icon: '🅿️', title: { es: 'Estacionamiento', en: 'Parking' }, content: { es: 'Cajón asignado en sótano.\nUse su tarjeta de acceso para ingresar.', en: 'Assigned spot in basement.\nUse your access card to enter.' } },
-      { icon: '🏊', title: { es: 'Amenidades', en: 'Amenities' }, content: { es: 'Alberca: 7am - 10pm\nGym: 6am - 10pm\nÁrea de asadores: 8am - 10pm', en: 'Pool: 7am - 10pm\nGym: 6am - 10pm\nBBQ area: 8am - 10pm' } },
-      { icon: '🍽️', title: { es: 'Restaurantes Cercanos', en: 'Nearby Restaurants' }, content: { es: '• La Leche - Cocina de autor\n• Tintoque - Mexicana contemporánea\n• Porto Bello - Italiana\n• Mariscos 8 Tostadas - Mariscos', en: '• La Leche - Author cuisine\n• Tintoque - Contemporary Mexican\n• Porto Bello - Italian\n• Mariscos 8 Tostadas - Seafood' } },
-      { icon: '🚕', title: { es: 'Transporte', en: 'Transportation' }, content: { es: 'Uber y Didi disponibles en la zona.\nTaxi seguro: Solicitar en recepción.\nRenta de auto: Consulte en recepción.', en: 'Uber and Didi available in the area.\nSafe taxi: Request at reception.\nCar rental: Ask at reception.' } },
-      { icon: '🏥', title: { es: 'Emergencias', en: 'Emergencies' }, content: { es: 'Emergencias: 911\nCruz Roja: 322-222-1533\nHospital CMQ: 322-223-1919\nFarmacia Guadalajara: 322-224-1100', en: 'Emergencies: 911\nRed Cross: 322-222-1533\nCMQ Hospital: 322-223-1919\nPharmacia Guadalajara: 322-224-1100' } },
-      { icon: '♻️', title: { es: 'Basura y Reciclaje', en: 'Trash & Recycling' }, content: { es: 'Deposite la basura en el contenedor del pasillo.\nSeparar orgánico e inorgánico.', en: 'Place trash in the hallway container.\nSeparate organic and inorganic waste.' } },
-      { icon: '📞', title: { es: 'Contacto Castle Solutions', en: 'Contact Castle Solutions' }, content: { es: 'WhatsApp: +52 322 XXX XXXX\nEmail: info@castlesolutions.mx\nEmergencia 24/7 disponible', en: 'WhatsApp: +52 322 XXX XXXX\nEmail: info@castlesolutions.mx\n24/7 Emergency available' } },
+      { icon: '📶', title: { es: 'WiFi', en: 'WiFi', fr: 'WiFi' }, content: { es: 'Red: VillaMagna253A\nContraseña: Pendiente', en: 'Network: VillaMagna253A\nPassword: Pending', fr: 'Réseau: VillaMagna253A\nMot de passe: En attente' } },
+      { icon: '📺', title: { es: 'Televisión', en: 'Television', fr: 'Télévision' }, content: { es: 'Smart TV con Netflix, Prime Video y Disney+.\nUse el control remoto para cambiar entre apps.', en: 'Smart TV with Netflix, Prime Video and Disney+.\nUse the remote to switch between apps.', fr: 'Smart TV avec Netflix, Prime Video et Disney+.\nUtilisez la télécommande pour changer d\'application.' } },
+      { icon: '🔐', title: { es: 'Caja Fuerte', en: 'Safe', fr: 'Coffre-fort' }, content: { es: 'Ubicada en el closet principal.\n1. Abra la puerta\n2. Ingrese un código de 4 dígitos\n3. Presione el botón verde\n4. Para abrir: ingrese su código y presione el botón verde', en: 'Located in the main closet.\n1. Open the door\n2. Enter a 4-digit code\n3. Press the green button\n4. To open: enter your code and press the green button', fr: 'Situé dans le placard principal.\n1. Ouvrez la porte\n2. Entrez un code à 4 chiffres\n3. Appuyez sur le bouton vert\n4. Pour ouvrir: entrez votre code et appuyez sur le bouton vert' } },
+      { icon: '🚪', title: { es: 'Acceso / Puerta', en: 'Access / Door', fr: 'Accès / Porte' }, content: { es: 'Código de acceso: Pendiente\nLlave física disponible en recepción.', en: 'Access code: Pending\nPhysical key available at reception.', fr: 'Code d\'accès: En attente\nClé physique disponible à la réception.' } },
+      { icon: '🅿️', title: { es: 'Estacionamiento', en: 'Parking', fr: 'Stationnement' }, content: { es: 'Cajón asignado en sótano.\nUse su tarjeta de acceso para ingresar.', en: 'Assigned spot in basement.\nUse your access card to enter.', fr: 'Place assignée au sous-sol.\nUtilisez votre carte d\'accès pour entrer.' } },
+      { icon: '🏊', title: { es: 'Amenidades', en: 'Amenities', fr: 'Commodités' }, content: { es: 'Alberca: 7am - 10pm\nGym: 6am - 10pm\nÁrea de asadores: 8am - 10pm', en: 'Pool: 7am - 10pm\nGym: 6am - 10pm\nBBQ area: 8am - 10pm', fr: 'Piscine: 7h - 22h\nGym: 6h - 22h\nAire de barbecue: 8h - 22h' } },
+      { icon: '🍽️', title: { es: 'Restaurantes Cercanos', en: 'Nearby Restaurants', fr: 'Restaurants à Proximité' }, content: { es: '• La Leche - Cocina de autor\n• Tintoque - Mexicana contemporánea\n• Porto Bello - Italiana\n• Mariscos 8 Tostadas - Mariscos', en: '• La Leche - Author cuisine\n• Tintoque - Contemporary Mexican\n• Porto Bello - Italian\n• Mariscos 8 Tostadas - Seafood', fr: '• La Leche - Cuisine d\'auteur\n• Tintoque - Mexicain contemporain\n• Porto Bello - Italien\n• Mariscos 8 Tostadas - Fruits de mer' } },
+      { icon: '🚕', title: { es: 'Transporte', en: 'Transportation', fr: 'Transport' }, content: { es: 'Uber y Didi disponibles en la zona.\nTaxi seguro: Solicitar en recepción.\nRenta de auto: Consulte en recepción.', en: 'Uber and Didi available in the area.\nSafe taxi: Request at reception.\nCar rental: Ask at reception.', fr: 'Uber et Didi disponibles dans la zone.\nTaxi sûr: Demandez à la réception.\nLocation de voiture: Demandez à la réception.' } },
+      { icon: '🏥', title: { es: 'Emergencias', en: 'Emergencies', fr: 'Urgences' }, content: { es: 'Emergencias: 911\nCruz Roja: 322-222-1533\nHospital CMQ: 322-223-1919\nFarmacia Guadalajara: 322-224-1100', en: 'Emergencies: 911\nRed Cross: 322-222-1533\nCMQ Hospital: 322-223-1919\nPharmacia Guadalajara: 322-224-1100', fr: 'Urgences: 911\nCroix-Rouge: 322-222-1533\nHôpital CMQ: 322-223-1919\nPharmacie Guadalajara: 322-224-1100' } },
+      { icon: '♻️', title: { es: 'Basura y Reciclaje', en: 'Trash & Recycling', fr: 'Déchets & Recyclage' }, content: { es: 'Deposite la basura en el contenedor del pasillo.\nSeparar orgánico e inorgánico.', en: 'Place trash in the hallway container.\nSeparate organic and inorganic waste.', fr: 'Déposez les déchets dans le conteneur du couloir.\nSéparez les déchets organiques et inorganiques.' } },
+      { icon: '📞', title: { es: 'Contacto Castle Solutions', en: 'Contact Castle Solutions', fr: 'Contact Castle Solutions' }, content: { es: 'WhatsApp: +52 322 XXX XXXX\nEmail: info@castlesolutions.mx\nEmergencia 24/7 disponible', en: 'WhatsApp: +52 322 XXX XXXX\nEmail: info@castlesolutions.mx\n24/7 Emergency available', fr: 'WhatsApp: +52 322 XXX XXXX\nEmail: info@castlesolutions.mx\nUrgence 24/7 disponible' } },
     ]
   }
 }
@@ -42,7 +43,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
   const slug = params.slug
   const guestName = searchParams.get('guest') || ''
   const langParam = searchParams.get('lang') || 'es'
-  const [lang, setLang] = useState<'es' | 'en'>(langParam as 'es' | 'en')
+  const [lang, setLang] = useState<Lang>(langParam as Lang)
   const [openSection, setOpenSection] = useState<number | null>(null)
   const [showBanner, setShowBanner] = useState(true)
 
@@ -50,16 +51,28 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
 
   const quickIcons = data.sections.slice(0, 4)
 
+  const currentIdx = LANG_OPTIONS.findIndex(o => o.code === lang)
+  const nextLang = LANG_OPTIONS[(currentIdx + 1) % LANG_OPTIONS.length]
+
+  const welcomeTexts = {
+    hello: { es: '¡Hola', en: 'Hello', fr: 'Bonjour' },
+    welcome: { es: 'Bienvenido(a) a Puerto Vallarta', en: 'Welcome to Puerto Vallarta', fr: 'Bienvenue à Puerto Vallarta' },
+    intro: { es: 'Esperamos hacer de tu estancia una experiencia inolvidable. Aquí tienes todo lo que necesitas.', en: 'We hope to make your stay an unforgettable experience. Here\'s everything you need.', fr: 'Nous espérons faire de votre séjour une expérience inoubliable. Voici tout ce dont vous avez besoin.' },
+    guide: { es: 'Tu Guía Personal', en: 'Your Personal Guide', fr: 'Votre Guide Personnel' },
+    report: { es: 'Reportar un Problema', en: 'Report an Issue', fr: 'Signaler un Problème' },
+    operated: { es: 'Operado por', en: 'Operated by', fr: 'Géré par' },
+    help: { es: '¿Necesitas ayuda? Toca "Contacto" arriba', en: 'Need help? Tap "Contact" above', fr: 'Besoin d\'aide? Appuyez sur "Contact" ci-dessus' }
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-lg mx-auto px-4 py-4 flex flex-col items-center gap-2">
           <img src="/logo.png" alt="Castle Solutions" className="h-20 w-auto" />
-          <button onClick={() => setLang(lang === 'es' ? 'en' : 'es')}
+          <button onClick={() => setLang(nextLang.code)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition text-sm font-medium text-gray-700">
-            <span className="text-base">{lang === 'es' ? '🇲🇽' : '🇺🇸'}</span>
-            {lang === 'es' ? 'ES' : 'EN'}
+            {nextLang.label}
           </button>
         </div>
       </header>
@@ -73,15 +86,13 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
             </button>
             <div className="text-castle-gold text-3xl mb-2">🏰</div>
             <h2 className="text-2xl font-bold text-white mb-1">
-              {lang === 'es' ? `¡Hola, ${guestName}!` : `Hello, ${guestName}!`}
+              {welcomeTexts.hello[lang]}, {guestName}!
             </h2>
             <p className="text-castle-gold font-medium text-lg mb-2">
-              {lang === 'es' ? 'Bienvenido(a) a Puerto Vallarta' : 'Welcome to Puerto Vallarta'}
+              {welcomeTexts.welcome[lang]}
             </p>
             <p className="text-white/70 text-sm leading-relaxed max-w-xs mx-auto">
-              {lang === 'es' 
-                ? 'Esperamos hacer de tu estancia una experiencia inolvidable. Aquí tienes todo lo que necesitas.'
-                : 'We hope to make your stay an unforgettable experience. Here\'s everything you need.'}
+              {welcomeTexts.intro[lang]}
             </p>
             <div className="mt-3 flex justify-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-castle-gold/60"></span>
@@ -97,7 +108,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
             <span className="text-castle-gold text-sm font-semibold">🏠 {data.name}</span>
           </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            {lang === 'es' ? 'Tu Guía Personal' : 'Your Personal Guide'}
+            {welcomeTexts.guide[lang]}
           </h1>
         </div>
 
@@ -107,7 +118,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
             <button key={i} onClick={() => setOpenSection(openSection === i ? null : i)}
               className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all bg-gray-50 hover:bg-gray-100">
               <span className="text-2xl">{s.icon}</span>
-              <span className="text-[11px] font-medium text-gray-600 text-center leading-tight">{s.title[lang]}</span>
+              <span className="text-[11px] font-medium text-gray-600 text-center leading-tight">{s.title[lang] || s.title.en}</span>
             </button>
           ))}
         </div>
@@ -119,12 +130,12 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
               <button onClick={() => setOpenSection(openSection === i ? null : i)}
                 className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors bg-white hover:bg-gray-50">
                 <span className="text-xl flex-shrink-0">{section.icon}</span>
-                <span className="font-medium text-gray-800 flex-1">{section.title[lang]}</span>
+                <span className="font-medium text-gray-800 flex-1">{section.title[lang] || section.title.en}</span>
                 <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${openSection === i ? 'rotate-180' : ''}`} />
               </button>
               {openSection === i && (
                 <div className="px-4 pb-4 bg-gray-50">
-                  <p className="text-gray-600 text-sm whitespace-pre-line leading-relaxed">{section.content[lang]}</p>
+                  <p className="text-gray-600 text-sm whitespace-pre-line leading-relaxed">{section.content[lang] || section.content.en}</p>
                   {section.videoUrl && (
                     <div className="mt-3">
                       <a href={section.videoUrl} target="_blank" rel="noopener noreferrer" 
@@ -143,17 +154,17 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
         <div className="mt-8 mb-6">
           <a href={`/report?type=renter&property=${encodeURIComponent(data.name)}&lang=${lang}`}
             className="block w-full text-center bg-castle-gold text-white font-semibold py-3.5 rounded-xl hover:bg-yellow-600 transition-colors shadow-sm">
-            ⚠️ {lang === 'es' ? 'Reportar un Problema' : 'Report an Issue'}
+            ⚠️ {welcomeTexts.report[lang]}
           </a>
         </div>
 
         {/* Footer */}
         <div className="text-center pb-6">
           <p className="text-xs text-gray-400">
-            {lang === 'es' ? 'Operado por' : 'Operated by'} <span className="text-castle-gold font-medium">Castle Solutions</span>
+            {welcomeTexts.operated[lang]} <span className="text-castle-gold font-medium">Castle Solutions</span>
           </p>
           <p className="text-xs text-gray-300 mt-1">
-            {lang === 'es' ? '¿Necesitas ayuda? Toca "Contacto" arriba' : 'Need help? Tap "Contact" above'}
+            {welcomeTexts.help[lang]}
           </p>
         </div>
       </div>
