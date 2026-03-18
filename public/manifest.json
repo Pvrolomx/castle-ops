@@ -1,10 +1,10 @@
 {
-  "name": "Castle Ops",
-  "short_name": "Castle Ops",
-  "description": "Reporta y da seguimiento a incidencias de tu propiedad",
+  "name": "Castle Solutions Maintenance",
+  "short_name": "Castle Maintenance",
+  "description": "Report and track property maintenance issues",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1A1A1A",
+  "background_color": "#D4C4B0",
   "theme_color": "#C9A227",
   "orientation": "portrait",
   "icons": [
@@ -19,6 +19,11 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
     }
   ]
 }
