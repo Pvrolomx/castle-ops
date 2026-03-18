@@ -47,7 +47,7 @@ Gestionar en: https://castle-ops.castlesolutions.mx/admin
         subject: `🚨 Nueva Incidencia: ${property} - ${categoryLabel[category] || category}`,
         message,
         sendFrom: 'castlesolutions.mx',
-        name: 'Castle Ops'
+        name: 'Castle Maintenance'
       })
     })
 
