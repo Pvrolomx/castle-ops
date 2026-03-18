@@ -1,11 +1,11 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'Castle Ops',
-  description: 'Reporta y da seguimiento a incidencias de tu propiedad',
+  title: 'Castle Solutions Maintenance',
+  description: 'Report and track property maintenance issues',
   manifest: '/manifest.json',
   themeColor: '#C9A227',
-  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'Castle Ops' },
+  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'Castle Maintenance' },
   viewport: { width: 'device-width', initialScale: 1, maximumScale: 1, userScalable: false }
 }
 
@@ -15,8 +15,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-        <link rel="icon" href="/logo.png" />
-        <link rel="apple-touch-icon" href="/icon-192.png" />
+        <link rel="icon" href="/icon-192.png?v=2" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="mobile-web-app-capable" content="yes" />
@@ -37,3 +37,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+
