@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 const EMAIL_SERVICE_URL = 'https://email.duendes.app/api/send'
-const NOTIFY_EMAIL = 'info@castlesolutions.mx'
+const NOTIFY_EMAIL = 'info@castlesolutions.biz'
 
 export async function POST(req: NextRequest) {
   try {
@@ -57,3 +57,4 @@ Gestionar en: https://castle-ops.castlesolutions.mx/admin
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
 }
+
