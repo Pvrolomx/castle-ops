@@ -49,16 +49,22 @@ export const CATEGORIES = [
   { value: 'plomeria', label: { es: '🔧 Plomería', en: '🔧 Plumbing', fr: '🔧 Plomberie' } },
   { value: 'electricidad', label: { es: '⚡ Electricidad', en: '⚡ Electrical', fr: '⚡ Électricité' } },
   { value: 'ac', label: { es: '❄️ Aire Acondicionado', en: '❄️ AC', fr: '❄️ Climatisation' } },
-  { value: 'otro', label: { es: '📦 Otro', en: '📦 Other', fr: '📦 Autre' } },
+  { value: 'electrodomesticos', label: { es: '🔌 Electrodomésticos', en: '🔌 Appliances', fr: '🔌 Électroménagers' } },
+  { value: 'internet_tv', label: { es: '📺 Internet y Televisión', en: '📺 Internet & TV', fr: '📺 Internet et TV' } },
+  { value: 'caja_seguridad', label: { es: '🔐 Caja de Seguridad', en: '🔐 Safe Box', fr: '🔐 Coffre-fort' } },
+  { value: 'persianas_cortinas', label: { es: '🪟 Persianas y Cortinas', en: '🪟 Blinds & Curtains', fr: '🪟 Stores et Rideaux' } },
+  { value: 'mejoras', label: { es: '🛠️ Mejoras', en: '🛠️ Improvements', fr: '🛠️ Améliorations' } },
+  { value: 'otro', label: { es: '📦 Otros', en: '📦 Other', fr: '📦 Autre' } },
 ]
 
 export const REQUEST_CATEGORIES = [
   { value: 'limpieza', label: { es: '🧹 Limpieza', en: '🧹 Cleaning', fr: '🧹 Nettoyage' } },
-  { value: 'mantenimiento', label: { es: '🔧 Mantenimiento', en: '🔧 Maintenance', fr: '🔧 Entretien' } },
-  { value: 'compras', label: { es: '🛒 Compras', en: '🛒 Shopping', fr: '🛒 Achats' } },
-  { value: 'mejoras', label: { es: '📐 Mejoras', en: '📐 Improvements', fr: '📐 Améliorations' } },
+  { value: 'compras_hogar', label: { es: '🏠 Compras del Hogar', en: '🏠 Home Shopping', fr: '🏠 Achats Maison' } },
+  { value: 'compras_despensa', label: { es: '🛒 Compras de Despensa', en: '🛒 Grocery Shopping', fr: '🛒 Courses' } },
+  { value: 'transporte', label: { es: '🚗 Transporte', en: '🚗 Transportation', fr: '🚗 Transport' } },
+  { value: 'decoracion', label: { es: '🎨 Decoración', en: '🎨 Decoration', fr: '🎨 Décoration' } },
   { value: 'jardineria', label: { es: '🌿 Jardinería', en: '🌿 Landscaping', fr: '🌿 Jardinage' } },
-  { value: 'otro', label: { es: '📦 Otro', en: '📦 Other', fr: '📦 Autre' } },
+  { value: 'otro', label: { es: '📦 Otros', en: '📦 Other', fr: '📦 Autre' } },
 ]
 
 export const URGENCY = [
