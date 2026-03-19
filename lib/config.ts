@@ -20,6 +20,8 @@ export const OWNERS: PropertyOwner[] = [
   { name: 'Daren and Kevin', code: '7487', properties: ['V Estrella 502'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
   { name: 'Daren, Kevin and Doug', code: '7486', properties: ['Casita 1', 'Casita 2'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
   { name: 'George', code: '6169', properties: ['Villa Magna 373 B'], greeting: { es: 'Bienvenido', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Tony and Bonnie', code: '9262', properties: ['Nitta 305'], greeting: { es: 'Bienvenidos', en: 'Welcome', fr: 'Bienvenue' } },
+  { name: 'Dan', code: '5959', properties: ['Nitta 404'], greeting: { es: 'Bienvenido', en: 'Welcome', fr: 'Bienvenue' } },
   { name: 'Staff', code: '1978', properties: [
     'Villa Magna 253 A', 'Villa Magna 352 A', 'Villa Magna 352 B', 'Villa Magna 336', 'Villa Magna 373 B',
     'Nitta 102', 'Nitta 305', 'Nitta 404',
