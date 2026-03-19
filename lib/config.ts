@@ -73,3 +73,17 @@ export const URGENCY = [
   { value: 'alta', label: { es: '🟠 Alta', en: '🟠 High', fr: '🟠 Élevée' } },
   { value: 'urgente', label: { es: '🔴 Urgente', en: '🔴 Urgent', fr: '🔴 Urgent' } },
 ]
+
+export const STAFF_MEMBERS = [
+  { name: 'Claudia', code: '2835' },
+  { name: 'Miranda', code: '4692' },
+]
+
+export const NOTE_CATEGORIES = [
+  { value: 'observacion', label: { es: '👁️ Observación', en: '👁️ Observation', fr: '👁️ Observation' } },
+  { value: 'mantenimiento', label: { es: '🔧 Mantenimiento Pendiente', en: '🔧 Pending Maintenance', fr: '🔧 Maintenance en attente' } },
+  { value: 'inventario', label: { es: '📦 Inventario', en: '📦 Inventory', fr: '📦 Inventaire' } },
+  { value: 'limpieza', label: { es: '🧹 Limpieza', en: '🧹 Cleaning', fr: '🧹 Nettoyage' } },
+  { value: 'urgente', label: { es: '🚨 Urgente', en: '🚨 Urgent', fr: '🚨 Urgent' } },
+  { value: 'otro', label: { es: '📝 Otro', en: '📝 Other', fr: '📝 Autre' } },
+]
