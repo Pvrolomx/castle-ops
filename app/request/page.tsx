@@ -31,8 +31,8 @@ function RequestForm() {
 
     const { error } = await supabase.from('incidents').insert([{
       property_name: selectedProperty,
-      reporter_type: 'propietario',
-      reporter_name: matchedOwner?.name || '',
+      reporter_type: matchedOwner?.name === 'Staff' ? 'staff' : 'propietario',
+      reporter_name: matchedOwner?.name === 'Staff' ? 'Staff - Castle Ops' : (matchedOwner?.name || ''),
       reporter_contact: matchedOwner?.name || '',
       category: `solicitud:${form.category}`,
       description: form.description,
