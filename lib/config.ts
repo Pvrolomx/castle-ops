@@ -27,7 +27,7 @@ export const OWNERS: PropertyOwner[] = [
     'Avida 408', 'Cielo 101', 'Sagitario',
     'Playa Royal 603', 'Playa Royal 604', 'Playa Royal 103', 'Playa Royal 105',
     'V Estrella 502', 'Casita 1', 'Casita 2'
-  ], greeting: { es: 'Bienvenido Staff', en: 'Welcome Staff', fr: 'Bienvenue Staff' } },
+  ], greeting: { es: 'Bienvenido', en: 'Welcome', fr: 'Bienvenue' } },
 ]
 
 export const ALL_PROPERTIES = OWNERS.flatMap(o => o.properties)
