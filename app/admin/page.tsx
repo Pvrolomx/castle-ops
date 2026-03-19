@@ -26,7 +26,6 @@ function AdminContent() {
   const [pinSearch, setPinSearch] = useState('')
   
   // Staff notes
-  const [staffNotes, setStaffNotes] = useState<any[]>([])
   const [staffForm, setStaffForm] = useState({ property: '', category: 'observacion', note: '', photo: '' })
   const [staffSaving, setStaffSaving] = useState(false)
 
@@ -46,9 +45,6 @@ function AdminContent() {
     setIncidents(incRes.data || [])
     setProviders(provRes.data || [])
     setLoading(false)
-    // Load staff notes
-    const notesRes = await supabase.from('staff_notes').select('*').order('created_at', { ascending: false }).limit(50)
-    setStaffNotes(notesRes.data || [])
   }
 
   function handlePin(e: React.FormEvent) {
@@ -426,7 +422,7 @@ function AdminContent() {
             
             {/* Form */}
             <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <select 
                   value={staffForm.property}
                   onChange={e => setStaffForm({...staffForm, property: e.target.value})}
@@ -446,10 +442,10 @@ function AdminContent() {
                     <option value="urgente">{lang === 'es' ? '🚨 Urgente' : '🚨 Urgent'}</option>
                   </optgroup>
                   <optgroup label={lang === 'es' ? '🔧 Problemas' : '🔧 Problems'}>
-                    {CATEGORIES.map(c => <option key={c.value} value={`problema_${c.value}`}>{c.label[lang]}</option>)}
+                    {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label[lang]}</option>)}
                   </optgroup>
                   <optgroup label={lang === 'es' ? '🛎️ Servicios' : '🛎️ Services'}>
-                    {REQUEST_CATEGORIES.map(c => <option key={c.value} value={`servicio_${c.value}`}>{c.label[lang]}</option>)}
+                    {REQUEST_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label[lang]}</option>)}
                   </optgroup>
                 </select>
               </div>
@@ -465,22 +461,18 @@ function AdminContent() {
                   if (!staffForm.property || !staffForm.note.trim()) return
                   setStaffSaving(true)
                   
-                  const categoryLabels: Record<string, string> = {
-                    observacion: '👁️ Observación',
-                    mantenimiento: '🔧 Mantenimiento Pendiente',
-                    inventario: '📦 Inventario',
-                    limpieza: '🧹 Limpieza',
-                    urgente: '🚨 Urgente',
-                    otro: '📝 Otro'
-                  }
-                  
-                  // Guardar en Supabase
-                  await supabase.from('staff_notes').insert([{
-                    staff_name: 'Admin',
-                    property: staffForm.property,
+                  // Guardar en tabla incidents con reporter_type: 'staff'
+                  await supabase.from('incidents').insert([{
+                    property_name: staffForm.property,
+                    reporter_type: 'staff',
+                    reporter_name: 'Staff - Castle Ops',
+                    reporter_contact: null,
                     category: staffForm.category,
-                    note: staffForm.note.trim(),
-                    created_at: new Date().toISOString()
+                    description: staffForm.note.trim(),
+                    urgency: staffForm.category === 'urgente' ? 'urgente' : 'normal',
+                    status: 'nuevo',
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                   }])
                   
                   // Enviar email de notificación
@@ -502,8 +494,7 @@ function AdminContent() {
                   } catch (e) { console.error('Email error:', e) }
                   
                   setStaffForm({ property: '', category: 'observacion', note: '', photo: '' })
-                  const res = await supabase.from('staff_notes').select('*').order('created_at', { ascending: false }).limit(50)
-                  setStaffNotes(res.data || [])
+                  loadData() // Recargar incidencias
                   setStaffSaving(false)
                 }}
                 disabled={!staffForm.property || !staffForm.note.trim() || staffSaving}
@@ -513,40 +504,32 @@ function AdminContent() {
               </button>
             </div>
 
-            {/* Notes List */}
+            {/* Staff Incidents List */}
             <div className="space-y-3">
-              <h3 className="font-medium text-gray-700">{lang === 'es' ? 'Notas Recientes' : 'Recent Notes'}</h3>
-              {staffNotes.length === 0 ? (
-                <p className="text-center text-gray-400 py-8">{lang === 'es' ? 'No hay notas aún' : 'No notes yet'}</p>
+              <h3 className="font-medium text-gray-700">{lang === 'es' ? 'Notas de Staff Recientes' : 'Recent Staff Notes'}</h3>
+              {incidents.filter(i => i.reporter_type === 'staff').length === 0 ? (
+                <p className="text-center text-gray-400 py-8">{lang === 'es' ? 'No hay notas de staff aún' : 'No staff notes yet'}</p>
               ) : (
-                staffNotes.map((n, i) => (
-                  <div key={i} className="bg-white border rounded-xl p-4 hover:shadow-sm transition-shadow">
+                incidents.filter(i => i.reporter_type === 'staff').slice(0, 20).map((incident) => (
+                  <div 
+                    key={incident.id} 
+                    onClick={() => loadIncidentDetail(incident)}
+                    className="bg-white border rounded-xl p-4 hover:shadow-md hover:border-castle-gold cursor-pointer transition-all"
+                  >
                     <div className="flex justify-between items-start mb-2">
                       <div>
-                        <span className="font-medium text-castle-gold">{n.property}</span>
-                        <span className="text-gray-400 text-sm ml-2">• {n.staff_name || 'Admin'}</span>
+                        <span className="font-medium text-castle-gold">{incident.property_name}</span>
+                        <span className={`ml-2 px-2 py-0.5 rounded-full text-xs status-${incident.status}`}>{incident.status}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                          {n.category === 'observacion' ? '👁️' : n.category === 'inventario' ? '📦' : n.category === 'urgente' ? '🚨' : n.category?.startsWith('problema_') ? '🔧' : n.category?.startsWith('servicio_') ? '🛎️' : '📝'}
-                        </span>
-                        <span className="text-xs text-gray-400">{new Date(n.created_at).toLocaleDateString()}</span>
-                        <button
-                          onClick={async (e) => {
-                            e.stopPropagation()
-                            if (!confirm(lang === 'es' ? '¿Eliminar esta nota?' : 'Delete this note?')) return
-                            await supabase.from('staff_notes').delete().eq('id', n.id)
-                            const res = await supabase.from('staff_notes').select('*').order('created_at', { ascending: false }).limit(50)
-                            setStaffNotes(res.data || [])
-                          }}
-                          className="text-red-400 hover:text-red-600 ml-2"
-                          title={lang === 'es' ? 'Eliminar' : 'Delete'}
-                        >
-                          🗑️
-                        </button>
+                        <span className="text-xs bg-gray-100 px-2 py-1 rounded">{incident.category}</span>
+                        <span className="text-xs text-gray-400">{new Date(incident.created_at).toLocaleDateString()}</span>
                       </div>
                     </div>
-                    <p className="text-gray-700">{n.note}</p>
+                    <p className="text-gray-700 text-sm line-clamp-2">{incident.description}</p>
+                    {incident.provider && (
+                      <p className="text-xs text-gray-500 mt-2">🔧 {(incident.provider as Provider).name}</p>
+                    )}
                   </div>
                 ))
               )}
