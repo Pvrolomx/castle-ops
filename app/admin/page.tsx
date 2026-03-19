@@ -268,7 +268,7 @@ function AdminContent() {
               className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${tab === t2 ? 'bg-castle-gold text-white' : 'bg-white hover:bg-gray-100'}`}>
               {t2 === 'pins' && <Key size={16} />}
               {t2 === 'staff' && <span>📋</span>}
-              {t2 === 'dashboard' ? t.dashboard[lang] : t2 === 'incidents' ? t.incidents[lang] : t2 === 'providers' ? t.providers[lang] : t2 === 'pins' ? 'PINs' : '📋 Staff'}
+              {t2 === 'dashboard' ? t.dashboard[lang] : t2 === 'incidents' ? t.incidents[lang] : t2 === 'providers' ? t.providers[lang] : t2 === 'pins' ? 'PINs' : 'Staff'}
             </button>
           ))}
         </div>
