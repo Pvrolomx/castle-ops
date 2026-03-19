@@ -14,7 +14,7 @@ function AdminContent() {
   const [authenticated, setAuthenticated] = useState(false)
   const [pin, setPin] = useState('')
   const [pinError, setPinError] = useState(false)
-  const [tab, setTab] = useState<'dashboard' | 'incidents' | 'providers' | 'pins' | 'staff'>('dashboard')
+  const [tab, setTab] = useState<'dashboard' | 'incidents' | 'providers' | 'pins'>('dashboard')
   const [incidents, setIncidents] = useState<Incident[]>([])
   const [providers, setProviders] = useState<Provider[]>([])
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null)
@@ -26,8 +26,6 @@ function AdminContent() {
   const [pinSearch, setPinSearch] = useState('')
   
   // Staff notes
-  const [staffForm, setStaffForm] = useState({ property: '', category: 'observacion', note: '', photo: '' })
-  const [staffSaving, setStaffSaving] = useState(false)
 
   // Provider form
   const [showProvForm, setShowProvForm] = useState(false)
@@ -268,12 +266,11 @@ function AdminContent() {
       {/* Admin Nav */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-2 flex-wrap">
-          {(['dashboard', 'incidents', 'providers', 'pins', 'staff'] as const).map(t2 => (
+          {(['dashboard', 'incidents', 'providers', 'pins'] as const).map(t2 => (
             <button key={t2} onClick={() => setTab(t2)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${tab === t2 ? 'bg-castle-gold text-white' : 'bg-white hover:bg-gray-100'}`}>
               {t2 === 'pins' && <Key size={16} />}
-              {t2 === 'staff' && <span>📋</span>}
-              {t2 === 'dashboard' ? t.dashboard[lang] : t2 === 'incidents' ? t.incidents[lang] : t2 === 'providers' ? t.providers[lang] : t2 === 'pins' ? 'PINs' : 'Staff'}
+              {t2 === 'dashboard' ? t.dashboard[lang] : t2 === 'incidents' ? t.incidents[lang] : t2 === 'providers' ? t.providers[lang] : 'PINs'}
             </button>
           ))}
         </div>
@@ -412,131 +409,7 @@ function AdminContent() {
       )}
 
       {/* Staff Notes Tab */}
-      {tab === 'staff' && (
-        <>
-          <div className="card">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-2xl">📋</span>
-              <h2 className="text-xl font-semibold">{lang === 'es' ? 'Notas Internas de Staff' : 'Internal Staff Notes'}</h2>
-            </div>
-            
-            {/* Form */}
-            <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <select 
-                  value={staffForm.property}
-                  onChange={e => setStaffForm({...staffForm, property: e.target.value})}
-                  className="px-4 py-2 border rounded-lg"
-                >
-                  <option value="">{lang === 'es' ? 'Seleccionar propiedad...' : 'Select property...'}</option>
-                  {RENTAL_PROPERTIES.map(p => <option key={p} value={p}>{p}</option>)}
-                </select>
-                <select
-                  value={staffForm.category}
-                  onChange={e => setStaffForm({...staffForm, category: e.target.value})}
-                  className="px-4 py-2 border rounded-lg"
-                >
-                  <optgroup label={lang === 'es' ? '📋 Notas Internas' : '📋 Internal Notes'}>
-                    <option value="observacion">{lang === 'es' ? '👁️ Observación' : '👁️ Observation'}</option>
-                    <option value="inventario">{lang === 'es' ? '📦 Inventario' : '📦 Inventory'}</option>
-                    <option value="urgente">{lang === 'es' ? '🚨 Urgente' : '🚨 Urgent'}</option>
-                  </optgroup>
-                  <optgroup label={lang === 'es' ? '🔧 Problemas' : '🔧 Problems'}>
-                    {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label[lang]}</option>)}
-                  </optgroup>
-                  <optgroup label={lang === 'es' ? '🛎️ Servicios' : '🛎️ Services'}>
-                    {REQUEST_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label[lang]}</option>)}
-                  </optgroup>
-                </select>
-              </div>
-              <textarea
-                value={staffForm.note}
-                onChange={e => setStaffForm({...staffForm, note: e.target.value})}
-                placeholder={lang === 'es' ? 'Escribe tu nota...' : 'Write your note...'}
-                className="w-full px-4 py-3 border rounded-lg resize-none"
-                rows={3}
-              />
-              <button
-                onClick={async () => {
-                  if (!staffForm.property || !staffForm.note.trim()) return
-                  setStaffSaving(true)
-                  
-                  // Guardar en tabla incidents con reporter_type: 'staff'
-                  await supabase.from('incidents').insert([{
-                    property_name: staffForm.property,
-                    reporter_type: 'staff',
-                    reporter_name: 'Staff - Castle Ops',
-                    reporter_contact: null,
-                    category: staffForm.category,
-                    description: staffForm.note.trim(),
-                    urgency: staffForm.category === 'urgente' ? 'urgente' : 'normal',
-                    status: 'nuevo',
-                    created_at: new Date().toISOString(),
-                    updated_at: new Date().toISOString()
-                  }])
-                  
-                  // Enviar email de notificación
-                  try {
-                    await fetch('/api/notify', {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                        property: staffForm.property,
-                        category: staffForm.category,
-                        description: staffForm.note.trim(),
-                        urgency: staffForm.category === 'urgente' ? 'urgente' : 'normal',
-                        reporterType: 'staff',
-                        reporterName: 'Staff - Castle Ops',
-                        reporterContact: 'Admin Panel',
-                        isStaffNote: true
-                      })
-                    })
-                  } catch (e) { console.error('Email error:', e) }
-                  
-                  setStaffForm({ property: '', category: 'observacion', note: '', photo: '' })
-                  loadData() // Recargar incidencias
-                  setStaffSaving(false)
-                }}
-                disabled={!staffForm.property || !staffForm.note.trim() || staffSaving}
-                className="w-full py-3 bg-castle-gold hover:bg-amber-600 disabled:bg-gray-300 text-white rounded-lg font-medium transition-colors"
-              >
-                {staffSaving ? (lang === 'es' ? 'Guardando...' : 'Saving...') : (lang === 'es' ? '💾 Guardar Nota' : '💾 Save Note')}
-              </button>
-            </div>
 
-            {/* Staff Incidents List */}
-            <div className="space-y-3">
-              <h3 className="font-medium text-gray-700">{lang === 'es' ? 'Notas de Staff Recientes' : 'Recent Staff Notes'}</h3>
-              {incidents.filter(i => i.reporter_type === 'staff').length === 0 ? (
-                <p className="text-center text-gray-400 py-8">{lang === 'es' ? 'No hay notas de staff aún' : 'No staff notes yet'}</p>
-              ) : (
-                incidents.filter(i => i.reporter_type === 'staff').slice(0, 20).map((incident) => (
-                  <div 
-                    key={incident.id} 
-                    onClick={() => loadIncidentDetail(incident)}
-                    className="bg-white border rounded-xl p-4 hover:shadow-md hover:border-castle-gold cursor-pointer transition-all"
-                  >
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <span className="font-medium text-castle-gold">{incident.property_name}</span>
-                        <span className={`ml-2 px-2 py-0.5 rounded-full text-xs status-${incident.status}`}>{incident.status}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs bg-gray-100 px-2 py-1 rounded">{incident.category}</span>
-                        <span className="text-xs text-gray-400">{new Date(incident.created_at).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 text-sm line-clamp-2">{incident.description}</p>
-                    {incident.provider && (
-                      <p className="text-xs text-gray-500 mt-2">🔧 {(incident.provider as Provider).name}</p>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </>
-      )}
     </div>
   )
 }
