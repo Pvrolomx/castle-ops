@@ -4,7 +4,7 @@ import { useState, useRef, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { OWNERS, RENTAL_PROPERTIES, CATEGORIES, URGENCY } from '@/lib/config'
-import { t, Lang, LANG_OPTIONS } from '@/lib/i18n'
+import { t, Lang } from '@/lib/i18n'
 import { ArrowLeft, CheckCircle, Camera, X } from 'lucide-react'
 import Link from 'next/link'
 
@@ -172,14 +172,11 @@ function ReportForm() {
   return (
     <div className="max-w-lg mx-auto">
       <div className="fixed top-4 right-4 z-50">
-        <button onClick={() => {
-          const currentIdx = LANG_OPTIONS.findIndex(o => o.code === lang)
-          const nextLang = LANG_OPTIONS[(currentIdx + 1) % LANG_OPTIONS.length]
-          setLang(nextLang.code)
-        }}
-          className="bg-white shadow-md rounded-full px-4 py-2 text-sm font-medium hover:shadow-lg transition-shadow">
-          {LANG_OPTIONS[(LANG_OPTIONS.findIndex(o => o.code === lang) + 1) % LANG_OPTIONS.length].label}
-        </button>
+        <div className="lang-toggle">
+          <button className={`lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => setLang('es')}>🇲🇽</button>
+          <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>🇺🇸</button>
+          <button className={`lang-btn ${lang === 'fr' ? 'active' : ''}`} onClick={() => setLang('fr')}>🇫🇷</button>
+        </div>
       </div>
 
       <Link href={isFromGuide ? 'javascript:history.back()' : `/?lang=${lang}`} className="flex items-center gap-2 text-gray-500 hover:text-castle-dark mb-6">
@@ -387,4 +384,5 @@ function ReportForm() {
 export default function ReportPage() {
   return <Suspense fallback={<div className="text-center py-20">Loading...</div>}><ReportForm /></Suspense>
 }
+
 
