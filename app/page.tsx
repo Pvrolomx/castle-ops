@@ -1,23 +1,21 @@
 'use client'
 export const dynamic = 'force-dynamic'
 import { useState } from 'react'
-import { t, Lang, LANG_OPTIONS } from '@/lib/i18n'
+import { t, Lang } from '@/lib/i18n'
 import Link from 'next/link'
 import { AlertTriangle, Search, Lock, ClipboardList } from 'lucide-react'
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>('es')
 
-  const currentIdx = LANG_OPTIONS.findIndex(o => o.code === lang)
-  const nextLang = LANG_OPTIONS[(currentIdx + 1) % LANG_OPTIONS.length]
-
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center space-y-6">
       <div className="fixed top-4 right-4 z-50">
-        <button onClick={() => setLang(nextLang.code)}
-          className="bg-white shadow-md rounded-full px-4 py-2 text-sm font-medium hover:shadow-lg transition-shadow">
-          {nextLang.label}
-        </button>
+        <div className="lang-toggle">
+          <button className={`lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => setLang('es')}>🇲🇽</button>
+          <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>🇺🇸</button>
+          <button className={`lang-btn ${lang === 'fr' ? 'active' : ''}`} onClick={() => setLang('fr')}>🇫🇷</button>
+        </div>
       </div>
 
       <img src="/logo.png" alt="Castle Solutions" className="h-24 w-auto" />
@@ -51,3 +49,4 @@ export default function Home() {
     </div>
   )
 }
+
