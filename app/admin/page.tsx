@@ -391,7 +391,9 @@ function AdminContent() {
                       </td>
                       <td className="py-3">
                         <div className="flex flex-wrap gap-1">
-                          {owner.properties.map(p => (
+                          {owner.name === 'Staff' ? (
+                            <span className="text-gray-400 italic text-sm">Todas las propiedades</span>
+                          ) : owner.properties.map(p => (
                             <span key={p} className="inline-block bg-gray-100 text-gray-700 text-sm px-2 py-0.5 rounded">{p}</span>
                           ))}
                         </div>
