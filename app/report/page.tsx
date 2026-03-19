@@ -104,8 +104,8 @@ function ReportForm() {
 
     const { error } = await supabase.from('incidents').insert([{
       property_name: selectedProperty,
-      reporter_type: reporterType === 'renter' ? 'huesped' : 'propietario',
-      reporter_name: reporterType === 'owner' ? matchedOwner?.name : form.reporter_name,
+      reporter_type: reporterType === 'renter' ? 'huesped' : (matchedOwner?.name === 'Staff' ? 'staff' : 'propietario'),
+      reporter_name: reporterType === 'owner' ? (matchedOwner?.name === 'Staff' ? 'Staff - Castle Ops' : matchedOwner?.name) : form.reporter_name,
       reporter_contact: reporterType === 'owner' ? (matchedOwner?.name || '') : (form.reporter_contact || form.reporter_email),
       category: form.category,
       description: form.description,
