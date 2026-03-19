@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase, Incident, Provider } from '@/lib/supabase'
-import { ADMIN_PIN, OWNERS } from '@/lib/config'
+import { ADMIN_PIN, OWNERS, RENTAL_PROPERTIES } from '@/lib/config'
 import { t, Lang } from '@/lib/i18n'
 import Link from 'next/link'
 import { Lock, AlertTriangle, Users, CheckCircle, Clock, Plus, Search, Send, Key } from 'lucide-react'
@@ -14,7 +14,7 @@ function AdminContent() {
   const [authenticated, setAuthenticated] = useState(false)
   const [pin, setPin] = useState('')
   const [pinError, setPinError] = useState(false)
-  const [tab, setTab] = useState<'dashboard' | 'incidents' | 'providers' | 'pins'>('dashboard')
+  const [tab, setTab] = useState<'dashboard' | 'incidents' | 'providers' | 'pins' | 'staff'>('dashboard')
   const [incidents, setIncidents] = useState<Incident[]>([])
   const [providers, setProviders] = useState<Provider[]>([])
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null)
@@ -24,6 +24,11 @@ function AdminContent() {
   const [filter, setFilter] = useState({ status: '', search: '' })
   const [loading, setLoading] = useState(true)
   const [pinSearch, setPinSearch] = useState('')
+  
+  // Staff notes
+  const [staffNotes, setStaffNotes] = useState<any[]>([])
+  const [staffForm, setStaffForm] = useState({ property: '', category: 'observacion', note: '', photo: '' })
+  const [staffSaving, setStaffSaving] = useState(false)
 
   // Provider form
   const [showProvForm, setShowProvForm] = useState(false)
@@ -41,6 +46,9 @@ function AdminContent() {
     setIncidents(incRes.data || [])
     setProviders(provRes.data || [])
     setLoading(false)
+    // Load staff notes
+    const notesRes = await supabase.from('staff_notes').select('*').order('created_at', { ascending: false }).limit(50)
+    setStaffNotes(notesRes.data || [])
   }
 
   function handlePin(e: React.FormEvent) {
@@ -255,11 +263,12 @@ function AdminContent() {
       {/* Admin Nav */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-2 flex-wrap">
-          {(['dashboard', 'incidents', 'providers', 'pins'] as const).map(t2 => (
+          {(['dashboard', 'incidents', 'providers', 'pins', 'staff'] as const).map(t2 => (
             <button key={t2} onClick={() => setTab(t2)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${tab === t2 ? 'bg-castle-gold text-white' : 'bg-white hover:bg-gray-100'}`}>
               {t2 === 'pins' && <Key size={16} />}
-              {t2 === 'dashboard' ? t.dashboard[lang] : t2 === 'incidents' ? t.incidents[lang] : t2 === 'providers' ? t.providers[lang] : 'PINs'}
+              {t2 === 'staff' && <span>📋</span>}
+              {t2 === 'dashboard' ? t.dashboard[lang] : t2 === 'incidents' ? t.incidents[lang] : t2 === 'providers' ? t.providers[lang] : t2 === 'pins' ? 'PINs' : '📋 Staff'}
             </button>
           ))}
         </div>
@@ -400,6 +409,98 @@ function AdminContent() {
             <p className="text-xs text-gray-400 mt-4 text-center">
               {lang === 'es' ? `${OWNERS.length} propietarios registrados` : `${OWNERS.length} registered owners`}
             </p>
+          </div>
+        </>
+      )}
+
+      {/* Staff Notes Tab */}
+      {tab === 'staff' && (
+        <>
+          <div className="card">
+            <div className="flex items-center gap-3 mb-6">
+              <span className="text-2xl">📋</span>
+              <h2 className="text-xl font-semibold">{lang === 'es' ? 'Notas Internas de Staff' : 'Internal Staff Notes'}</h2>
+            </div>
+            
+            {/* Form */}
+            <div className="bg-gray-50 rounded-xl p-4 mb-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <select 
+                  value={staffForm.property}
+                  onChange={e => setStaffForm({...staffForm, property: e.target.value})}
+                  className="px-4 py-2 border rounded-lg"
+                >
+                  <option value="">{lang === 'es' ? 'Seleccionar propiedad...' : 'Select property...'}</option>
+                  {RENTAL_PROPERTIES.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+                <select
+                  value={staffForm.category}
+                  onChange={e => setStaffForm({...staffForm, category: e.target.value})}
+                  className="px-4 py-2 border rounded-lg"
+                >
+                  <option value="observacion">{lang === 'es' ? '👁️ Observación' : '👁️ Observation'}</option>
+                  <option value="mantenimiento">{lang === 'es' ? '🔧 Mantenimiento Pendiente' : '🔧 Pending Maintenance'}</option>
+                  <option value="inventario">{lang === 'es' ? '📦 Inventario' : '📦 Inventory'}</option>
+                  <option value="limpieza">{lang === 'es' ? '🧹 Limpieza' : '🧹 Cleaning'}</option>
+                  <option value="urgente">{lang === 'es' ? '🚨 Urgente' : '🚨 Urgent'}</option>
+                  <option value="otro">{lang === 'es' ? '📝 Otro' : '📝 Other'}</option>
+                </select>
+              </div>
+              <textarea
+                value={staffForm.note}
+                onChange={e => setStaffForm({...staffForm, note: e.target.value})}
+                placeholder={lang === 'es' ? 'Escribe tu nota...' : 'Write your note...'}
+                className="w-full px-4 py-3 border rounded-lg resize-none"
+                rows={3}
+              />
+              <button
+                onClick={async () => {
+                  if (!staffForm.property || !staffForm.note.trim()) return
+                  setStaffSaving(true)
+                  await supabase.from('staff_notes').insert([{
+                    staff_name: 'Admin',
+                    property: staffForm.property,
+                    category: staffForm.category,
+                    note: staffForm.note.trim(),
+                    created_at: new Date().toISOString()
+                  }])
+                  setStaffForm({ property: '', category: 'observacion', note: '', photo: '' })
+                  const res = await supabase.from('staff_notes').select('*').order('created_at', { ascending: false }).limit(50)
+                  setStaffNotes(res.data || [])
+                  setStaffSaving(false)
+                }}
+                disabled={!staffForm.property || !staffForm.note.trim() || staffSaving}
+                className="w-full py-3 bg-castle-gold hover:bg-amber-600 disabled:bg-gray-300 text-white rounded-lg font-medium transition-colors"
+              >
+                {staffSaving ? (lang === 'es' ? 'Guardando...' : 'Saving...') : (lang === 'es' ? '💾 Guardar Nota' : '💾 Save Note')}
+              </button>
+            </div>
+
+            {/* Notes List */}
+            <div className="space-y-3">
+              <h3 className="font-medium text-gray-700">{lang === 'es' ? 'Notas Recientes' : 'Recent Notes'}</h3>
+              {staffNotes.length === 0 ? (
+                <p className="text-center text-gray-400 py-8">{lang === 'es' ? 'No hay notas aún' : 'No notes yet'}</p>
+              ) : (
+                staffNotes.map((n, i) => (
+                  <div key={i} className="bg-white border rounded-xl p-4 hover:shadow-sm transition-shadow">
+                    <div className="flex justify-between items-start mb-2">
+                      <div>
+                        <span className="font-medium text-castle-gold">{n.property}</span>
+                        <span className="text-gray-400 text-sm ml-2">• {n.staff_name || 'Admin'}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs bg-gray-100 px-2 py-1 rounded">
+                          {n.category === 'observacion' ? '👁️' : n.category === 'mantenimiento' ? '🔧' : n.category === 'inventario' ? '📦' : n.category === 'limpieza' ? '🧹' : n.category === 'urgente' ? '🚨' : '📝'}
+                        </span>
+                        <span className="text-xs text-gray-400">{new Date(n.created_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                    <p className="text-gray-700">{n.note}</p>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </>
       )}
