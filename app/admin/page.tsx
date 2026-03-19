@@ -285,10 +285,10 @@ function AdminContent() {
       {/* Dashboard Tab */}
       {tab === 'dashboard' && (
         <>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="card"><div className="flex items-center gap-3"><div className="p-3 bg-blue-100 rounded-lg"><AlertTriangle className="text-blue-600" size={24} /></div><div><p className="text-2xl font-bold">{stats.nuevo}</p><p className="text-gray-500 text-sm">{t.new[lang]}</p></div></div></div>
-            <div className="card"><div className="flex items-center gap-3"><div className="p-3 bg-orange-100 rounded-lg"><Clock className="text-orange-600" size={24} /></div><div><p className="text-2xl font-bold">{stats.progreso}</p><p className="text-gray-500 text-sm">{t.inProgress[lang]}</p></div></div></div>
-            <div className="card"><div className="flex items-center gap-3"><div className="p-3 bg-green-100 rounded-lg"><CheckCircle className="text-green-600" size={24} /></div><div><p className="text-2xl font-bold">{stats.resuelto}</p><p className="text-gray-500 text-sm">{t.resolved[lang]}</p></div></div></div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="card"><div className="flex items-center gap-2 sm:gap-3"><div className="p-2 sm:p-3 bg-blue-100 rounded-lg"><AlertTriangle className="text-blue-600" size={24} /></div><div><p className="text-2xl font-bold">{stats.nuevo}</p><p className="text-gray-500 text-sm">{t.new[lang]}</p></div></div></div>
+            <div className="card"><div className="flex items-center gap-2 sm:gap-3"><div className="p-2 sm:p-3 bg-orange-100 rounded-lg"><Clock className="text-orange-600" size={24} /></div><div><p className="text-2xl font-bold">{stats.progreso}</p><p className="text-gray-500 text-sm">{t.inProgress[lang]}</p></div></div></div>
+            <div className="card"><div className="flex items-center gap-2 sm:gap-3"><div className="p-2 sm:p-3 bg-green-100 rounded-lg"><CheckCircle className="text-green-600" size={24} /></div><div><p className="text-2xl font-bold">{stats.resuelto}</p><p className="text-gray-500 text-sm">{t.resolved[lang]}</p></div></div></div>
           </div>
           <div className="card">
             <h2 className="font-semibold mb-4">{lang === 'es' ? 'Incidencias recientes' : 'Recent incidents'}</h2>
