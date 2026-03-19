@@ -98,6 +98,17 @@ function AdminContent() {
     loadData()
   }
 
+  async function deleteIncident(id: string) {
+    const msg = lang === 'es' ? '¿Eliminar este reporte? Esta acción no se puede deshacer.' 
+      : lang === 'fr' ? 'Supprimer ce rapport ? Cette action est irréversible.'
+      : 'Delete this report? This action cannot be undone.'
+    if (!confirm(msg)) return
+    await supabase.from('incident_updates').delete().eq('incident_id', id)
+    await supabase.from('incidents').delete().eq('id', id)
+    setSelectedIncident(null)
+    loadData()
+  }
+
   // PIN Screen
   if (!authenticated) {
     return (
@@ -142,9 +153,14 @@ function AdminContent() {
   if (selectedIncident) {
     return (
       <div className="max-w-4xl mx-auto">
-        <button onClick={() => setSelectedIncident(null)} className="flex items-center gap-2 text-gray-500 hover:text-castle-dark mb-6">
-          ← {t.back[lang]}
-        </button>
+        <div className="flex justify-between items-center mb-6">
+          <button onClick={() => setSelectedIncident(null)} className="flex items-center gap-2 text-gray-500 hover:text-castle-dark">
+            ← {t.back[lang]}
+          </button>
+          <button onClick={() => deleteIncident(selectedIncident.id)} className="flex items-center gap-2 text-red-400 hover:text-red-600 text-sm">
+            🗑️ {lang === 'es' ? 'Eliminar' : lang === 'fr' ? 'Supprimer' : 'Delete'}
+          </button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
             <div className="card">
@@ -397,4 +413,5 @@ function AdminContent() {
 export default function AdminPage() {
   return <Suspense fallback={<div className="text-center py-20">Loading...</div>}><AdminContent /></Suspense>
 }
+
 
