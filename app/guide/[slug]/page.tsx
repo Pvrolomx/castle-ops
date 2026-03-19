@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ChevronDown, X } from 'lucide-react'
-import { Lang, LANG_OPTIONS } from '@/lib/i18n'
+import { Lang } from '@/lib/i18n'
 
 type PropertyData = {
   name: string
@@ -51,9 +51,6 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
 
   const quickIcons = data.sections.slice(0, 4)
 
-  const currentIdx = LANG_OPTIONS.findIndex(o => o.code === lang)
-  const nextLang = LANG_OPTIONS[(currentIdx + 1) % LANG_OPTIONS.length]
-
   const welcomeTexts = {
     hello: { es: '¡Hola', en: 'Hello', fr: 'Bonjour' },
     welcome: { es: 'Bienvenido(a) a Puerto Vallarta', en: 'Welcome to Puerto Vallarta', fr: 'Bienvenue à Puerto Vallarta' },
@@ -70,10 +67,11 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-lg mx-auto px-4 py-4 flex flex-col items-center gap-2">
           <img src="/logo.png" alt="Castle Solutions" className="h-20 w-auto" />
-          <button onClick={() => setLang(nextLang.code)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 hover:bg-gray-200 transition text-sm font-medium text-gray-700">
-            {nextLang.label}
-          </button>
+          <div className="lang-toggle">
+            <button className={`lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => setLang('es')}>🇲🇽</button>
+            <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>🇺🇸</button>
+            <button className={`lang-btn ${lang === 'fr' ? 'active' : ''}`} onClick={() => setLang('fr')}>🇫🇷</button>
+          </div>
         </div>
       </header>
 
@@ -171,3 +169,4 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
     </div>
   )
 }
+
