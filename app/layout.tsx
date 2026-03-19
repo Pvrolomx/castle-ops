@@ -26,7 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </main>
         <footer className="text-center py-4 text-gray-400 text-sm">
-          Made by <span className="text-castle-gold font-medium">duendes.app</span> — 2026
+          Made by <span className="text-castle-gold font-medium">Colmena</span> — 2026
         </footer>
         <script dangerouslySetInnerHTML={{ __html: `
           if ('serviceWorker' in navigator) {
