@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase, Incident, Provider } from '@/lib/supabase'
-import { ADMIN_PIN, OWNERS, RENTAL_PROPERTIES } from '@/lib/config'
+import { ADMIN_PIN, OWNERS, RENTAL_PROPERTIES, CATEGORIES, REQUEST_CATEGORIES } from '@/lib/config'
 import { t, Lang } from '@/lib/i18n'
 import Link from 'next/link'
 import { Lock, AlertTriangle, Users, CheckCircle, Clock, Plus, Search, Send, Key } from 'lucide-react'
@@ -260,6 +260,15 @@ function AdminContent() {
 
   return (
     <div className="space-y-6">
+      {/* Fixed Language Toggle */}
+      <div className="fixed top-4 right-4 z-50">
+        <div className="lang-toggle">
+          <button className={`lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => setLang('es')}>🇲🇽</button>
+          <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>🇺🇸</button>
+          <button className={`lang-btn ${lang === 'fr' ? 'active' : ''}`} onClick={() => setLang('fr')}>🇫🇷</button>
+        </div>
+      </div>
+      
       {/* Admin Nav */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex gap-2 flex-wrap">
@@ -272,14 +281,7 @@ function AdminContent() {
             </button>
           ))}
         </div>
-        <div className="flex items-center gap-3">
-          <div className="lang-toggle">
-            <button className={`lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => setLang('es')}>🇲🇽</button>
-            <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>🇺🇸</button>
-            <button className={`lang-btn ${lang === 'fr' ? 'active' : ''}`} onClick={() => setLang('fr')}>🇫🇷</button>
-          </div>
-          <Link href={`/?lang=${lang}`} className="text-gray-400 hover:text-gray-600 text-sm">{t.back[lang]}</Link>
-        </div>
+        <Link href={`/?lang=${lang}`} className="text-gray-400 hover:text-gray-600 text-sm">{t.back[lang]}</Link>
       </div>
 
       {/* Dashboard Tab */}
@@ -438,12 +440,17 @@ function AdminContent() {
                   onChange={e => setStaffForm({...staffForm, category: e.target.value})}
                   className="px-4 py-2 border rounded-lg"
                 >
-                  <option value="observacion">{lang === 'es' ? '👁️ Observación' : '👁️ Observation'}</option>
-                  <option value="mantenimiento">{lang === 'es' ? '🔧 Mantenimiento Pendiente' : '🔧 Pending Maintenance'}</option>
-                  <option value="inventario">{lang === 'es' ? '📦 Inventario' : '📦 Inventory'}</option>
-                  <option value="limpieza">{lang === 'es' ? '🧹 Limpieza' : '🧹 Cleaning'}</option>
-                  <option value="urgente">{lang === 'es' ? '🚨 Urgente' : '🚨 Urgent'}</option>
-                  <option value="otro">{lang === 'es' ? '📝 Otro' : '📝 Other'}</option>
+                  <optgroup label={lang === 'es' ? '📋 Notas Internas' : '📋 Internal Notes'}>
+                    <option value="observacion">{lang === 'es' ? '👁️ Observación' : '👁️ Observation'}</option>
+                    <option value="inventario">{lang === 'es' ? '📦 Inventario' : '📦 Inventory'}</option>
+                    <option value="urgente">{lang === 'es' ? '🚨 Urgente' : '🚨 Urgent'}</option>
+                  </optgroup>
+                  <optgroup label={lang === 'es' ? '🔧 Problemas' : '🔧 Problems'}>
+                    {CATEGORIES.map(c => <option key={c.value} value={`problema_${c.value}`}>{c.label[lang]}</option>)}
+                  </optgroup>
+                  <optgroup label={lang === 'es' ? '🛎️ Servicios' : '🛎️ Services'}>
+                    {REQUEST_CATEGORIES.map(c => <option key={c.value} value={`servicio_${c.value}`}>{c.label[lang]}</option>)}
+                  </optgroup>
                 </select>
               </div>
               <textarea
@@ -521,7 +528,7 @@ function AdminContent() {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs bg-gray-100 px-2 py-1 rounded">
-                          {n.category === 'observacion' ? '👁️' : n.category === 'mantenimiento' ? '🔧' : n.category === 'inventario' ? '📦' : n.category === 'limpieza' ? '🧹' : n.category === 'urgente' ? '🚨' : '📝'}
+                          {n.category === 'observacion' ? '👁️' : n.category === 'inventario' ? '📦' : n.category === 'urgente' ? '🚨' : n.category?.startsWith('problema_') ? '🔧' : n.category?.startsWith('servicio_') ? '🛎️' : '📝'}
                         </span>
                         <span className="text-xs text-gray-400">{new Date(n.created_at).toLocaleDateString()}</span>
                         <button
