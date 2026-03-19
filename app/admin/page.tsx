@@ -457,6 +457,17 @@ function AdminContent() {
                 onClick={async () => {
                   if (!staffForm.property || !staffForm.note.trim()) return
                   setStaffSaving(true)
+                  
+                  const categoryLabels: Record<string, string> = {
+                    observacion: '👁️ Observación',
+                    mantenimiento: '🔧 Mantenimiento Pendiente',
+                    inventario: '📦 Inventario',
+                    limpieza: '🧹 Limpieza',
+                    urgente: '🚨 Urgente',
+                    otro: '📝 Otro'
+                  }
+                  
+                  // Guardar en Supabase
                   await supabase.from('staff_notes').insert([{
                     staff_name: 'Admin',
                     property: staffForm.property,
@@ -464,6 +475,25 @@ function AdminContent() {
                     note: staffForm.note.trim(),
                     created_at: new Date().toISOString()
                   }])
+                  
+                  // Enviar email de notificación
+                  try {
+                    await fetch('/api/notify', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        property: staffForm.property,
+                        category: staffForm.category,
+                        description: staffForm.note.trim(),
+                        urgency: staffForm.category === 'urgente' ? 'urgente' : 'normal',
+                        reporterType: 'staff',
+                        reporterName: 'Staff - Castle Ops',
+                        reporterContact: 'Admin Panel',
+                        isStaffNote: true
+                      })
+                    })
+                  } catch (e) { console.error('Email error:', e) }
+                  
                   setStaffForm({ property: '', category: 'observacion', note: '', photo: '' })
                   const res = await supabase.from('staff_notes').select('*').order('created_at', { ascending: false }).limit(50)
                   setStaffNotes(res.data || [])
@@ -494,6 +524,19 @@ function AdminContent() {
                           {n.category === 'observacion' ? '👁️' : n.category === 'mantenimiento' ? '🔧' : n.category === 'inventario' ? '📦' : n.category === 'limpieza' ? '🧹' : n.category === 'urgente' ? '🚨' : '📝'}
                         </span>
                         <span className="text-xs text-gray-400">{new Date(n.created_at).toLocaleDateString()}</span>
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation()
+                            if (!confirm(lang === 'es' ? '¿Eliminar esta nota?' : 'Delete this note?')) return
+                            await supabase.from('staff_notes').delete().eq('id', n.id)
+                            const res = await supabase.from('staff_notes').select('*').order('created_at', { ascending: false }).limit(50)
+                            setStaffNotes(res.data || [])
+                          }}
+                          className="text-red-400 hover:text-red-600 ml-2"
+                          title={lang === 'es' ? 'Eliminar' : 'Delete'}
+                        >
+                          🗑️
+                        </button>
                       </div>
                     </div>
                     <p className="text-gray-700">{n.note}</p>
