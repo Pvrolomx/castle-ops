@@ -27,3 +27,28 @@ body {
 .urgency-normal { @apply bg-blue-100 text-blue-600; }
 .urgency-alta { @apply bg-orange-100 text-orange-600; }
 .urgency-urgente { @apply bg-red-100 text-red-600; }
+
+
+/* Language Toggle */
+.lang-toggle {
+  display: flex;
+  gap: 4px;
+  background: white;
+  padding: 4px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.lang-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.lang-btn.active {
+  background: var(--castle-gold);
+}
