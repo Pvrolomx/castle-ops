@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { supabase, Incident, Provider } from '@/lib/supabase'
 import { ADMIN_PIN, OWNERS } from '@/lib/config'
-import { t, Lang, LANG_OPTIONS } from '@/lib/i18n'
+import { t, Lang } from '@/lib/i18n'
 import Link from 'next/link'
 import { Lock, AlertTriangle, Users, CheckCircle, Clock, Plus, Search, Send, Key } from 'lucide-react'
 
@@ -264,14 +264,11 @@ function AdminContent() {
           ))}
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={() => {
-            const currentIdx = LANG_OPTIONS.findIndex(o => o.code === lang)
-            const nextLang = LANG_OPTIONS[(currentIdx + 1) % LANG_OPTIONS.length]
-            setLang(nextLang.code)
-          }}
-            className="bg-white shadow-sm rounded-full px-3 py-1.5 text-sm font-medium hover:shadow-md transition-shadow">
-            {LANG_OPTIONS[(LANG_OPTIONS.findIndex(o => o.code === lang) + 1) % LANG_OPTIONS.length].label}
-          </button>
+          <div className="lang-toggle">
+            <button className={`lang-btn ${lang === 'es' ? 'active' : ''}`} onClick={() => setLang('es')}>🇲🇽</button>
+            <button className={`lang-btn ${lang === 'en' ? 'active' : ''}`} onClick={() => setLang('en')}>🇺🇸</button>
+            <button className={`lang-btn ${lang === 'fr' ? 'active' : ''}`} onClick={() => setLang('fr')}>🇫🇷</button>
+          </div>
           <Link href={`/?lang=${lang}`} className="text-gray-400 hover:text-gray-600 text-sm">{t.back[lang]}</Link>
         </div>
       </div>
