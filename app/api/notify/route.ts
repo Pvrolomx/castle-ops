@@ -6,7 +6,7 @@ const NOTIFY_EMAIL = 'info@castlesolutions.biz'
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { property, category, description, urgency, reporterType, reporterName, reporterContact } = body
+    const { property, category, description, urgency, reporterType, reporterName, reporterContact, isStaffNote } = body
 
     const urgencyEmoji: Record<string, string> = {
       baja: '🟢 Baja',
@@ -20,10 +20,36 @@ export async function POST(req: NextRequest) {
       electricidad: '⚡ Electricidad',
       limpieza: '🧹 Limpieza',
       ac: '❄️ Aire Acondicionado',
-      otro: '📦 Otro'
+      observacion: '👁️ Observación',
+      mantenimiento: '🔧 Mantenimiento Pendiente',
+      inventario: '📦 Inventario',
+      urgente: '🚨 Urgente',
+      otro: '📝 Otro'
     }
 
-    const message = `
+    let subject: string
+    let message: string
+
+    if (isStaffNote) {
+      // Formato para notas de staff
+      subject = `📋 Nota de Staff: ${property} - ${categoryLabel[category] || category}`
+      message = `
+NUEVA NOTA INTERNA DE STAFF
+
+🏠 Propiedad: ${property}
+📋 Categoría: ${categoryLabel[category] || category}
+⏰ Fecha: ${new Date().toLocaleString('es-MX', { timeZone: 'America/Mexico_City' })}
+
+📝 Nota:
+${description}
+
+---
+Ver todas las notas: https://castle-ops.castlesolutions.mx/admin
+      `.trim()
+    } else {
+      // Formato original para incidencias
+      subject = `🚨 Nueva Incidencia: ${property} - ${categoryLabel[category] || category}`
+      message = `
 NUEVA INCIDENCIA REPORTADA
 
 🏠 Propiedad: ${property}
@@ -37,14 +63,15 @@ ${description}
 
 ---
 Gestionar en: https://castle-ops.castlesolutions.mx/admin
-    `.trim()
+      `.trim()
+    }
 
     const emailRes = await fetch(EMAIL_SERVICE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         to: NOTIFY_EMAIL,
-        subject: `🚨 Nueva Incidencia: ${property} - ${categoryLabel[category] || category}`,
+        subject,
         message,
         sendFrom: 'castlesolutions.mx',
         name: 'Castle Maintenance'
@@ -57,4 +84,3 @@ Gestionar en: https://castle-ops.castlesolutions.mx/admin
     return NextResponse.json({ success: false, error: error.message }, { status: 500 })
   }
 }
-
