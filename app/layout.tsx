@@ -22,6 +22,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body className="bg-castle-sand min-h-screen">
+        {/* Install Button - Fixed Bottom */}
+        <div id="install-container" className="hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50">
+          <button id="install-btn" className="flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full shadow-lg text-sm font-medium transition-all">
+            <span>📲</span> Instalar App
+          </button>
+        </div>
+        
         <main className="max-w-4xl mx-auto px-4 py-6">
           {children}
         </main>
@@ -29,12 +36,35 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Made by <span className="text-castle-gold font-medium">Colmena</span> — 2026
         </footer>
         <script dangerouslySetInnerHTML={{ __html: `
+          // Service Worker
           if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js').catch(() => {})
           }
+          
+          // PWA Install Prompt
+          let deferredPrompt;
+          window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-container').classList.remove('hidden');
+          });
+          
+          document.getElementById('install-btn')?.addEventListener('click', () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(r => {
+              if (r.outcome === 'accepted') {
+                document.getElementById('install-container').classList.add('hidden');
+              }
+              deferredPrompt = null;
+            });
+          });
+          
+          window.addEventListener('appinstalled', () => {
+            document.getElementById('install-container').classList.add('hidden');
+          });
         `}} />
       </body>
     </html>
   )
 }
-
