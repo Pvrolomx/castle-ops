@@ -73,8 +73,8 @@ Gestionar en: https://castle-ops.castlesolutions.mx/admin
         to: NOTIFY_EMAIL,
         subject,
         message,
-        sendFrom: 'castlesolutions.mx',
-        name: 'Castle Maintenance'
+        sendFrom: 'expatadvisormx.com',
+        name: 'Castle Solutions'
       })
     })
 
