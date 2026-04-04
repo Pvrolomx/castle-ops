@@ -304,7 +304,7 @@ function ReportForm() {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               📸 {lang === 'es' ? 'Foto o video (opcional)' : 'Photo or video (optional)'}
             </label>
-            <input ref={fileRef} type="file" accept="image/*,video/*" capture="environment" multiple
+            <input ref={fileRef} type="file" accept="image/*,video/*" multiple
               className="hidden" onChange={handleFileSelect} />
 
             {previews.length > 0 && (
