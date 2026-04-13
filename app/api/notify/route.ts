@@ -31,7 +31,6 @@ export async function POST(req: NextRequest) {
     let message: string
 
     if (isStaffNote) {
-      // Formato para notas de staff
       subject = `📋 Nota de Staff: ${property} - ${categoryLabel[category] || category}`
       message = `
 NUEVA NOTA INTERNA DE STAFF
@@ -47,7 +46,6 @@ ${description}
 Ver todas las notas: https://castle-ops.castlesolutions.mx/admin
       `.trim()
     } else {
-      // Formato original para incidencias
       subject = `🚨 Nueva Incidencia: ${property} - ${categoryLabel[category] || category}`
       message = `
 NUEVA INCIDENCIA REPORTADA
@@ -66,6 +64,8 @@ Gestionar en: https://castle-ops.castlesolutions.mx/admin
       `.trim()
     }
 
+    // No se envía 'from' para que el Reply-To quede vacío (noreply)
+    // Claudia debe responder manualmente usando el contacto indicado arriba
     const emailRes = await fetch(EMAIL_SERVICE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -73,7 +73,7 @@ Gestionar en: https://castle-ops.castlesolutions.mx/admin
         to: NOTIFY_EMAIL,
         subject,
         message,
-        sendFrom: 'expatadvisormx.com',
+        sendFrom: 'castlesolutions.biz',
         name: 'Castle Solutions'
       })
     })
