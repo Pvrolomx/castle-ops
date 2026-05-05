@@ -126,6 +126,11 @@ export default function Home() {
           <Lock size={16} />
           {t.admin[lang]}
         </Link>
+        <Link href="/staff"
+          className="text-gray-400 hover:text-gray-600 flex items-center gap-2 px-6 py-3 transition-colors">
+          <Lock size={16} />
+          Staff
+        </Link>
       </div>
     </div>
   )
