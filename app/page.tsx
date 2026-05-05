@@ -8,41 +8,39 @@ import { AlertTriangle, Search, Lock, ClipboardList } from 'lucide-react'
 
 // ── Tutorial Modal ────────────────────────────────────────────────────────────
 function HelpModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
-  const steps = {
+  const steps: Record<Lang, { icon: string; title: string; desc: string }[]> = {
     es: [
-      { icon: '🌐', title: 'Abre la app', desc: 'Entra a castle-ops.castlesolutions.mx desde tu celular. La primera vez aparece un botón azul "📲 Instalar App" — úsalo para tenerla en tu pantalla de inicio.' },
-      { icon: '🚨', title: 'Toca "Reportar Incidencia"', desc: 'En la pantalla principal verás el botón verde. Al tocarlo te preguntará quién eres: Propietario (ingresa tu PIN de 4 dígitos) o Huésped (ingresa tu código de reservación).' },
+      { icon: '🌐', title: 'Abre la app', desc: 'Entra a castle-ops.castlesolutions.mx desde tu celular. La primera vez aparece un botón azul — úsalo para tenerla en tu pantalla de inicio.' },
+      { icon: '🚨', title: 'Reportar Incidencia', desc: 'En la pantalla principal verás el botón verde. Al tocarlo te preguntará quién eres: Propietario (ingresa tu PIN de 4 dígitos) o Huésped (ingresa tu código de reservación).' },
       { icon: '📝', title: 'Llena el reporte', desc: 'Selecciona la categoría (Plomería, Electricidad, Limpieza, A/C, etc.), el nivel de urgencia, escribe una descripción y adjunta fotos si puedes (hasta 3).' },
-      { icon: '✅', title: 'Envía', desc: 'Toca "Enviar Reporte". El equipo de Castle Solutions recibe una notificación inmediata y te contacta directamente para coordinar la solución.' },
+      { icon: '✅', title: 'Envía', desc: 'Toca Enviar Reporte. El equipo de Castle Solutions recibe una notificación inmediata y te contacta directamente para coordinar la solución.' },
     ],
     en: [
-      { icon: '🌐', title: 'Open the app', desc: 'Go to castle-ops.castlesolutions.mx on your phone. The first time, a blue "📲 Install App" button appears — tap it to add it to your home screen.' },
-      { icon: '🚨', title: 'Tap "Report an Issue"', desc: 'On the main screen tap the green button. You will be asked who you are: Owner (enter your 4-digit PIN) or Guest (enter your reservation code).' },
+      { icon: '🌐', title: 'Open the app', desc: 'Go to castle-ops.castlesolutions.mx on your phone. The first time, a blue Install App button appears — tap it to add it to your home screen.' },
+      { icon: '🚨', title: 'Report an Issue', desc: 'On the main screen tap the green button. You will be asked who you are: Owner (enter your 4-digit PIN) or Guest (enter your reservation code).' },
       { icon: '📝', title: 'Fill out the report', desc: 'Select the category (Plumbing, Electrical, Cleaning, A/C, etc.), urgency level, write a description and attach photos if possible (up to 3).' },
-      { icon: '✅', title: 'Submit', desc: 'Tap "Submit Report". The Castle Solutions team receives an immediate notification and contacts you directly to coordinate the solution.' },
+      { icon: '✅', title: 'Submit', desc: 'Tap Submit Report. The Castle Solutions team receives an immediate notification and contacts you directly to coordinate the solution.' },
     ],
     fr: [
-      { icon: '🌐', title: "Ouvrez l'app", desc: "Allez sur castle-ops.castlesolutions.mx depuis votre téléphone. La première fois, un bouton bleu \"📲 Installer l'App\" apparaît — appuyez dessus pour l'ajouter à votre écran d'accueil." },
-      { icon: '🚨', title: "Appuyez sur \"Signaler un Problème\"", desc: "Sur l'écran principal appuyez sur le bouton vert. On vous demandera qui vous êtes: Propriétaire (entrez votre PIN à 4 chiffres) ou Hôte (entrez votre code de réservation)." },
-      { icon: '📝', title: 'Remplissez le rapport', desc: "Sélectionnez la catégorie (Plomberie, Électricité, Nettoyage, A/C, etc.), le niveau d'urgence, écrivez une description et joignez des photos si possible (jusqu'à 3)." },
-      { icon: '✅', title: 'Envoyez', desc: "Appuyez sur \"Envoyer\". L'équipe de Castle Solutions reçoit une notification immédiate et vous contacte directement pour coordonner la solution." },
+      { icon: '🌐', title: 'Ouvrez l app', desc: 'Allez sur castle-ops.castlesolutions.mx depuis votre telephone. La premiere fois, un bouton bleu Installer App apparait — appuyez dessus pour l ajouter a votre ecran.' },
+      { icon: '🚨', title: 'Signalez un Probleme', desc: 'Sur l ecran principal appuyez sur le bouton vert. On vous demandera qui vous etes: Proprietaire (entrez votre PIN a 4 chiffres) ou Hote (entrez votre code de reservation).' },
+      { icon: '📝', title: 'Remplissez le rapport', desc: 'Selectionnez la categorie (Plomberie, Electricite, Nettoyage, A/C, etc.), le niveau d urgence, ecrivez une description et joignez des photos si possible (jusqu a 3).' },
+      { icon: '✅', title: 'Envoyez', desc: 'Appuyez sur Envoyer. L equipe de Castle Solutions recoit une notification immediate et vous contacte directement pour coordonner la solution.' },
     ],
   }
 
-  const labels = {
-    es: { title: 'Cómo Reportar un Problema', emergency: '📞 Emergencia real (inundación, incendio, corte total): llama directo al WhatsApp de Castle Solutions, no esperes el reporte.', download: '📄 Descargar PDF', close: 'Cerrar' },
-    en: { title: 'How to Report an Issue', emergency: '📞 Real emergency (flooding, fire, total power outage): call Castle Solutions WhatsApp directly — do not wait for the report.', download: '📄 Download PDF', close: 'Close' },
-    fr: { title: 'Comment Signaler un Problème', emergency: '📞 Urgence réelle (inondation, incendie, coupure totale): appelez directement le WhatsApp de Castle Solutions — n'attendez pas le rapport.', download: '📄 Télécharger PDF', close: 'Fermer' },
+  const labels: Record<Lang, { title: string; emergency: string; download: string; close: string }> = {
+    es: { title: 'Como Reportar un Problema', emergency: 'Emergencia real (inundacion, incendio, corte total): llama directo al WhatsApp de Castle Solutions, no esperes el reporte.', download: 'Descargar PDF', close: 'Cerrar' },
+    en: { title: 'How to Report an Issue', emergency: 'Real emergency (flooding, fire, total power outage): call Castle Solutions WhatsApp directly — do not wait for the report.', download: 'Download PDF', close: 'Close' },
+    fr: { title: 'Comment Signaler un Probleme', emergency: 'Urgence reelle (inondation, incendie, coupure totale): appelez directement le WhatsApp de Castle Solutions — n attendez pas le rapport.', download: 'Telecharger PDF', close: 'Fermer' },
   }
 
   const l = labels[lang]
   const s = steps[lang]
 
   const downloadPDF = () => {
-    const content = `CASTLE SOLUTIONS — ${l.title}\n\n` +
-      s.map((step, i) => `${i+1}. ${step.title}\n   ${step.desc}`).join('\n\n') +
-      `\n\n⚠️  ${l.emergency}\n\ncastle-ops.castlesolutions.mx`
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
+    const text = 'CASTLE SOLUTIONS\n\n' + s.map((step, i) => (i+1) + '. ' + step.title + '\n   ' + step.desc).join('\n\n') + '\n\ncastle-ops.castlesolutions.mx'
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
@@ -69,12 +67,12 @@ function HelpModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
             </div>
           ))}
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-800 mt-2">
-            {l.emergency}
+            📞 {l.emergency}
           </div>
         </div>
         <div className="p-5 border-t border-gray-100 flex gap-3">
           <button onClick={downloadPDF} className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">
-            {l.download}
+            📄 {l.download}
           </button>
           <button onClick={onClose} className="px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm hover:bg-gray-50 transition-colors">
             {l.close}
