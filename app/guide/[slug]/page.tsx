@@ -147,6 +147,28 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
     help: { es: '¿Necesitas ayuda? Toca "Contacto" arriba', en: 'Need help? Tap "Contact" above', fr: 'Besoin d\'aide? Appuyez sur "Contact" ci-dessus' }
   }
 
+  const downloadGuide = () => {
+    const lines: string[] = []
+    lines.push('CASTLE SOLUTIONS — ' + data.name)
+    lines.push('='.repeat(40))
+    lines.push('')
+    data.sections.forEach((s: any) => {
+      lines.push(s.icon + ' ' + (s.title[lang] || s.title.en))
+      lines.push('-'.repeat(30))
+      lines.push(s.content[lang] || s.content.en)
+      lines.push('')
+    })
+    lines.push('='.repeat(40))
+    lines.push('castle-ops.castlesolutions.mx')
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = data.name.toLowerCase().replace(/\s+/g, '-') + '-guide.txt'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -234,8 +256,16 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
           ))}
         </div>
 
+        {/* Download guide button */}
+        <div className="mt-8 mb-3">
+          <button onClick={downloadGuide}
+            className="block w-full text-center bg-white border-2 border-emerald-600 text-emerald-700 font-semibold py-3.5 rounded-xl hover:bg-emerald-50 transition-colors shadow-sm">
+            📥 {lang === 'es' ? 'Descargar Guía' : lang === 'fr' ? 'Télécharger le Guide' : 'Download Guide'}
+          </button>
+        </div>
+
         {/* Report issue button */}
-        <div className="mt-8 mb-6">
+        <div className="mb-6">
           <a href={`/report?type=renter&property=${encodeURIComponent(data.name)}&lang=${lang}`}
             className="block w-full text-center bg-castle-gold text-white font-semibold py-3.5 rounded-xl hover:bg-yellow-600 transition-colors shadow-sm">
             ⚠️ {welcomeTexts.report[lang]}
