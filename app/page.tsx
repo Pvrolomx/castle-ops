@@ -22,10 +22,10 @@ function HelpModal({ lang, onClose }: { lang: Lang; onClose: () => void }) {
       { icon: '✅', title: 'Submit', desc: 'Tap "Submit Report". The Castle Solutions team receives an immediate notification and contacts you directly to coordinate the solution.' },
     ],
     fr: [
-      { icon: '🌐', title: "Ouvrez l'app", desc: 'Allez sur castle-ops.castlesolutions.mx depuis votre téléphone. La première fois, un bouton bleu "📲 Installer l'App" apparaît — appuyez dessus pour l'ajouter à votre écran d'accueil.' },
-      { icon: '🚨', title: 'Appuyez sur "Signaler un Problème"', desc: 'Sur l'écran principal appuyez sur le bouton vert. On vous demandera qui vous êtes: Propriétaire (entrez votre PIN à 4 chiffres) ou Hôte (entrez votre code de réservation).' },
-      { icon: '📝', title: 'Remplissez le rapport', desc: 'Sélectionnez la catégorie (Plomberie, Électricité, Nettoyage, A/C, etc.), le niveau d'urgence, écrivez une description et joignez des photos si possible (jusqu'à 3).' },
-      { icon: '✅', title: 'Envoyez', desc: 'Appuyez sur "Envoyer". L'équipe de Castle Solutions reçoit une notification immédiate et vous contacte directement pour coordonner la solution.' },
+      { icon: '🌐', title: "Ouvrez l'app", desc: "Allez sur castle-ops.castlesolutions.mx depuis votre téléphone. La première fois, un bouton bleu \"📲 Installer l'App\" apparaît — appuyez dessus pour l'ajouter à votre écran d'accueil." },
+      { icon: '🚨', title: "Appuyez sur \"Signaler un Problème\"", desc: "Sur l'écran principal appuyez sur le bouton vert. On vous demandera qui vous êtes: Propriétaire (entrez votre PIN à 4 chiffres) ou Hôte (entrez votre code de réservation)." },
+      { icon: '📝', title: 'Remplissez le rapport', desc: "Sélectionnez la catégorie (Plomberie, Électricité, Nettoyage, A/C, etc.), le niveau d'urgence, écrivez une description et joignez des photos si possible (jusqu'à 3)." },
+      { icon: '✅', title: 'Envoyez', desc: "Appuyez sur \"Envoyer\". L'équipe de Castle Solutions reçoit une notification immédiate et vous contacte directement pour coordonner la solution." },
     ],
   }
 
